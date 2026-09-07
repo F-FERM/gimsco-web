@@ -3,6 +3,7 @@ import Certifications from "@/components/Certifications";
 import CompanyHistory from "@/components/CompanyHistory";
 import Home from "@/components/home/Home";
 import ProductEcosystem from "@/components/ProductEcosystem";
+import QualityValue from "@/components/QualityValue";
 import StatsSection from "@/components/StatsSection";
 import StoreSolutions from "@/components/StoreSolutions";
 import WhyChooseSection from "@/components/WhyChooseSection";
@@ -19,6 +20,7 @@ const page = () => {
       <ProductEcosystem/>
       <Certifications/>
       <CompanyHistory/>
+      <QualityValue/>
     </main>
   );
 };
