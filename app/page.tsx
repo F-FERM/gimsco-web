@@ -1,5 +1,6 @@
 import AboutSection from "@/components/AboutSection";
 import Home from "@/components/home/Home";
+import ProductEcosystem from "@/components/ProductEcosystem";
 import StatsSection from "@/components/StatsSection";
 import StoreSolutions from "@/components/StoreSolutions";
 import WhyChooseSection from "@/components/WhyChooseSection";
@@ -13,6 +14,7 @@ const page = () => {
       <AboutSection />
       <WhyChooseSection/>
       <StoreSolutions/>
+      <ProductEcosystem/>
     </main>
   );
 };
