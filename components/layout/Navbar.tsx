@@ -30,6 +30,9 @@ const navItems = [
   },
 ];
 
+const PHONE_NUMBER = "+971 054 796 5591";
+const PHONE_LINK = "tel:+971547965591";
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -76,7 +79,7 @@ export default function Navbar() {
       behavior: "smooth",
     });
 
-    // Close mobile menu
+    // Close mobile menu after navigation
     setMenuOpen(false);
   };
 
@@ -92,6 +95,15 @@ export default function Navbar() {
     scrollToSection(sectionId);
   };
 
+  /*
+   * Handle logo click.
+   */
+  const handleLogoClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    scrollToSection("home");
+  };
+
   return (
     <header
       style={{
@@ -99,11 +111,19 @@ export default function Navbar() {
         top: 0,
         left: 0,
         width: "100%",
+
         height: isMobile ? "76px" : "86px",
+
+        /*
+         * Negative margin keeps the Home hero starting
+         * at the same top position as the navbar.
+         */
         marginBottom: isMobile ? "-76px" : "-86px",
+
         zIndex: 1000,
 
-        background: "rgba(255, 255, 255, 0.17)",
+        background: "#FFFFFF2B",
+
         backdropFilter: "blur(14px)",
         WebkitBackdropFilter: "blur(14px)",
 
@@ -122,16 +142,20 @@ export default function Navbar() {
         style={{
           width: "100%",
           maxWidth: "1280px",
+
           height: "100%",
+
           margin: "0 auto",
 
-          padding: isMobile ? "0 20px" : "0 32px",
+          padding: isMobile ? "0 20px" : "0 clamp(24px, 3vw, 32px)",
 
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
 
           boxSizing: "border-box",
+
+          gap: "20px",
         }}
       >
         {/* ===================================================
@@ -140,13 +164,16 @@ export default function Navbar() {
 
         <button
           type="button"
-          onClick={(event) => handleNavClick(event, "home")}
+          onClick={handleLogoClick}
           aria-label="Go to home"
           style={{
             display: "flex",
             alignItems: "center",
+            justifyContent: "flex-start",
 
             flexShrink: 0,
+
+            width: "auto",
 
             padding: 0,
             margin: 0,
@@ -157,6 +184,8 @@ export default function Navbar() {
             cursor: "pointer",
 
             lineHeight: 0,
+
+            WebkitTapHighlightColor: "transparent",
           }}
         >
           <Image
@@ -166,7 +195,8 @@ export default function Navbar() {
             height={70}
             priority
             style={{
-              width: isMobile ? "150px" : "195px",
+              width: isMobile ? "150px" : "clamp(165px, 15vw, 195px)",
+
               height: "auto",
 
               display: "block",
@@ -188,10 +218,14 @@ export default function Navbar() {
               alignItems: "center",
               justifyContent: "center",
 
-              gap: "clamp(18px, 2.2vw, 34px)",
+              flex: 1,
+
+              minWidth: 0,
+
+              gap: "clamp(14px, 2vw, 32px)",
 
               marginLeft: "auto",
-              marginRight: "clamp(24px, 3.5vw, 58px)",
+              marginRight: "clamp(20px, 2.5vw, 40px)",
             }}
           >
             {navItems.map((item, index) => {
@@ -220,7 +254,7 @@ export default function Navbar() {
 
                     fontFamily: "var(--font-poppins), Poppins, sans-serif",
 
-                    fontSize: "clamp(12px, 0.9vw, 14px)",
+                    fontSize: "clamp(11px, 0.9vw, 14px)",
 
                     fontWeight: isHome ? 600 : 400,
 
@@ -232,14 +266,20 @@ export default function Navbar() {
 
                     cursor: "pointer",
 
-                    transition: "color 0.2s ease, opacity 0.2s ease",
+                    transition: "color 0.2s ease, transform 0.2s ease",
+
+                    WebkitTapHighlightColor: "transparent",
                   }}
                   onMouseEnter={(event) => {
+                    event.currentTarget.style.transform = "translateY(-1px)";
+
                     if (!isHome) {
                       event.currentTarget.style.color = "#293C9D";
                     }
                   }}
                   onMouseLeave={(event) => {
+                    event.currentTarget.style.transform = "translateY(0)";
+
                     if (!isHome) {
                       event.currentTarget.style.color = "#FFFFFF";
                     }
@@ -253,15 +293,15 @@ export default function Navbar() {
         )}
 
         {/* ===================================================
-            DESKTOP QUOTE BUTTON
+            DESKTOP CALL BUTTON
         =================================================== */}
 
         {!isMobile && (
-          <button
-            type="button"
-            onClick={(event) => handleNavClick(event, "contact")}
+          <a
+            href={PHONE_LINK}
+            aria-label={`Call GIMSCO at ${PHONE_NUMBER}`}
             style={{
-              width: "185px",
+              width: "clamp(175px, 14vw, 205px)",
               height: "46px",
 
               flexShrink: 0,
@@ -269,6 +309,8 @@ export default function Navbar() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+
+              gap: "8px",
 
               border: "none",
               borderRadius: "30px",
@@ -278,29 +320,61 @@ export default function Navbar() {
 
               fontFamily: "var(--font-poppins), Poppins, sans-serif",
 
-              fontSize: "12px",
+              fontSize: "clamp(11px, 0.85vw, 13px)",
+
               fontWeight: 600,
 
               lineHeight: 1,
-              letterSpacing: "0.25px",
+
+              letterSpacing: "0.1px",
+
+              textDecoration: "none",
 
               cursor: "pointer",
 
               boxSizing: "border-box",
 
-              transition: "background 0.25s ease, transform 0.25s ease",
+              transition:
+                "background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
+
+              whiteSpace: "nowrap",
             }}
             onMouseEnter={(event) => {
               event.currentTarget.style.background = "#222F83";
+
               event.currentTarget.style.transform = "translateY(-1px)";
+
+              event.currentTarget.style.boxShadow =
+                "0 8px 20px rgba(41,60,157,0.28)";
             }}
             onMouseLeave={(event) => {
               event.currentTarget.style.background = "#293C9D";
+
               event.currentTarget.style.transform = "translateY(0)";
+
+              event.currentTarget.style.boxShadow = "none";
             }}
           >
-            REQUEST A QUOTE
-          </button>
+            {/* Phone Icon */}
+            <svg
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+              style={{
+                flexShrink: 0,
+              }}
+            >
+              <path
+                d="M22 16.92V20.92C22 21.47 21.55 21.92 21 21.92C10.51 21.92 2 13.41 2 2.92C2 2.37 2.45 1.92 3 1.92H7C7.55 1.92 8 2.37 8 2.92C8 4.17 8.2 5.37 8.58 6.5C8.67 6.78 8.6 7.1 8.39 7.31L6.67 9.03C8.18 12.01 10.91 14.74 13.89 16.25L15.61 14.53C15.82 14.32 16.14 14.25 16.42 14.34C17.55 14.72 18.75 14.92 20 14.92C20.55 14.92 21 15.37 21 15.92L22 16.92Z"
+                fill="currentColor"
+              />
+            </svg>
+
+            <span>{PHONE_NUMBER}</span>
+          </a>
         )}
 
         {/* ===================================================
@@ -322,7 +396,7 @@ export default function Navbar() {
               border: "none",
               borderRadius: "10px",
 
-              background: "rgba(255,255,255,0.45)",
+              background: "rgba(255,255,255,0.55)",
 
               display: "flex",
               flexDirection: "column",
@@ -337,9 +411,13 @@ export default function Navbar() {
               flexShrink: 0,
 
               boxSizing: "border-box",
+
+              boxShadow: "0 4px 15px rgba(0,0,0,0.06)",
+
+              WebkitTapHighlightColor: "transparent",
             }}
           >
-            {/* Top line */}
+            {/* Top Line */}
             <span
               style={{
                 display: "block",
@@ -359,7 +437,7 @@ export default function Navbar() {
               }}
             />
 
-            {/* Middle line */}
+            {/* Middle Line */}
             <span
               style={{
                 display: "block",
@@ -379,7 +457,7 @@ export default function Navbar() {
               }}
             />
 
-            {/* Bottom line */}
+            {/* Bottom Line */}
             <span
               style={{
                 display: "block",
@@ -416,14 +494,14 @@ export default function Navbar() {
 
             width: "100%",
 
-            background: "rgba(255,255,255,0.94)",
+            background: "rgba(255,255,255,0.96)",
 
             backdropFilter: "blur(16px)",
             WebkitBackdropFilter: "blur(16px)",
 
-            borderTop: "1px solid rgba(255,255,255,0.4)",
+            borderTop: "1px solid rgba(255,255,255,0.5)",
 
-            boxShadow: "0 12px 30px rgba(0,0,0,0.08)",
+            boxShadow: "0 12px 30px rgba(0,0,0,0.10)",
 
             padding: "10px 20px 20px",
 
@@ -457,6 +535,7 @@ export default function Navbar() {
                     padding: "0 4px",
 
                     border: "none",
+
                     borderBottom: "1px solid rgba(0,0,0,0.07)",
 
                     background: "transparent",
@@ -474,6 +553,22 @@ export default function Navbar() {
                     cursor: "pointer",
 
                     boxSizing: "border-box",
+
+                    transition: "color 0.2s ease, padding-left 0.2s ease",
+
+                    WebkitTapHighlightColor: "transparent",
+                  }}
+                  onMouseEnter={(event) => {
+                    event.currentTarget.style.color = "#293C9D";
+
+                    event.currentTarget.style.paddingLeft = "8px";
+                  }}
+                  onMouseLeave={(event) => {
+                    event.currentTarget.style.color = isHome
+                      ? "#293C9D"
+                      : "#222222";
+
+                    event.currentTarget.style.paddingLeft = "4px";
                   }}
                 >
                   {item.label}
@@ -481,19 +576,26 @@ export default function Navbar() {
               );
             })}
 
-            {/* Mobile Quote Button */}
-            <button
-              type="button"
-              onClick={(event) => handleNavClick(event, "contact")}
+            {/* =================================================
+                MOBILE CALL BUTTON
+            ================================================= */}
+
+            <a
+              href={PHONE_LINK}
+              aria-label={`Call GIMSCO at ${PHONE_NUMBER}`}
               style={{
                 width: "100%",
-                height: "48px",
+                minHeight: "50px",
 
                 marginTop: "18px",
+
+                padding: "0 18px",
 
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+
+                gap: "9px",
 
                 border: "none",
                 borderRadius: "28px",
@@ -503,16 +605,53 @@ export default function Navbar() {
 
                 fontFamily: "var(--font-poppins), Poppins, sans-serif",
 
-                fontSize: "12px",
+                fontSize: "14px",
+
                 fontWeight: 600,
 
-                letterSpacing: "0.25px",
+                letterSpacing: "0.1px",
+
+                textDecoration: "none",
 
                 cursor: "pointer",
+
+                boxSizing: "border-box",
+
+                transition: "background 0.25s ease, transform 0.25s ease",
+
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(event) => {
+                event.currentTarget.style.background = "#222F83";
+
+                event.currentTarget.style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={(event) => {
+                event.currentTarget.style.background = "#293C9D";
+
+                event.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              REQUEST A QUOTE
-            </button>
+              {/* Phone Icon */}
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                style={{
+                  flexShrink: 0,
+                }}
+              >
+                <path
+                  d="M22 16.92V20.92C22 21.47 21.55 21.92 21 21.92C10.51 21.92 2 13.41 2 2.92C2 2.37 2.45 1.92 3 1.92H7C7.55 1.92 8 2.37 8 2.92C8 4.17 8.2 5.37 8.58 6.5C8.67 6.78 8.6 7.1 8.39 7.31L6.67 9.03C8.18 12.01 10.91 14.74 13.89 16.25L15.61 14.53C15.82 14.32 16.14 14.25 16.42 14.34C17.55 14.72 18.75 14.92 20 14.92C20.55 14.92 21 15.37 21 15.92L22 16.92Z"
+                  fill="currentColor"
+                />
+              </svg>
+
+              <span>{PHONE_NUMBER}</span>
+            </a>
           </nav>
         </div>
       )}
