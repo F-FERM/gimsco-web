@@ -1,6 +1,7 @@
 import AboutSection from "@/components/AboutSection";
 import Home from "@/components/home/Home";
 import StatsSection from "@/components/StatsSection";
+import StoreSolutions from "@/components/StoreSolutions";
 import WhyChooseSection from "@/components/WhyChooseSection";
 import React from "react";
 
@@ -11,6 +12,7 @@ const page = () => {
       <StatsSection />
       <AboutSection />
       <WhyChooseSection/>
+      <StoreSolutions/>
     </main>
   );
 };
