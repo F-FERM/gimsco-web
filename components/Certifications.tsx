@@ -47,6 +47,7 @@ export default function Certifications() {
 
   return (
     <section
+      id="certifications"
       style={{
         width: "100%",
         background: "#F1F1FA",

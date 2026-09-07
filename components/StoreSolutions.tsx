@@ -115,6 +115,7 @@ export default function StoreSolutions() {
 
   return (
     <section
+      id="services"
       style={{
         width: "100%",
         background: "#FFFFFF",

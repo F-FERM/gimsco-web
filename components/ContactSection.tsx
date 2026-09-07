@@ -11,7 +11,7 @@ export default function ContactSection() {
   };
 
   return (
-    <section className="contact-section">
+    <section id="contact" className="contact-section">
       {/* Background overlay */}
       <div className="contact-overlay" />
 

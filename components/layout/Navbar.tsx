@@ -1,33 +1,32 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const navItems = [
   {
     label: "Home",
-    href: "/",
+    sectionId: "home",
   },
   {
     label: "About",
-    href: "/about",
+    sectionId: "about",
   },
   {
     label: "Services",
-    href: "/services",
+    sectionId: "services",
   },
   {
     label: "Global Network",
-    href: "/global-network",
+    sectionId: "global-network",
   },
   {
     label: "Certifications",
-    href: "/certifications",
+    sectionId: "certifications",
   },
   {
     label: "Contact",
-    href: "/contact",
+    sectionId: "contact",
   },
 ];
 
@@ -37,7 +36,14 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      const mobile = window.innerWidth <= 768;
+
+      setIsMobile(mobile);
+
+      // Automatically close mobile menu when switching to desktop
+      if (!mobile) {
+        setMenuOpen(false);
+      }
     };
 
     handleResize();
@@ -49,7 +55,42 @@ export default function Navbar() {
     };
   }, []);
 
-  const navbarHeight = isMobile ? 76 : 86;
+  /*
+   * Smooth scroll to a section without changing the URL.
+   */
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+
+    if (!section) {
+      console.warn(`Section with id="${sectionId}" was not found.`);
+      return;
+    }
+
+    const navbarHeight = isMobile ? 76 : 86;
+
+    const sectionTop =
+      section.getBoundingClientRect().top + window.scrollY - navbarHeight;
+
+    window.scrollTo({
+      top: Math.max(0, sectionTop),
+      behavior: "smooth",
+    });
+
+    // Close mobile menu
+    setMenuOpen(false);
+  };
+
+  /*
+   * Handle navbar item click.
+   */
+  const handleNavClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    sectionId: string,
+  ) => {
+    event.preventDefault();
+
+    scrollToSection(sectionId);
+  };
 
   return (
     <header
@@ -58,14 +99,19 @@ export default function Navbar() {
         top: 0,
         left: 0,
         width: "100%",
-        height: `${navbarHeight}px`,
-        marginBottom: `-${navbarHeight}px`,
+        height: isMobile ? "76px" : "86px",
+        marginBottom: isMobile ? "-76px" : "-86px",
         zIndex: 1000,
-        background: "#FFFFFF2B",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.16)",
+
+        background: "rgba(255, 255, 255, 0.17)",
+        backdropFilter: "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
+
+        borderBottom: "1px solid rgba(255, 255, 255, 0.18)",
+
         boxSizing: "border-box",
+
+        transition: "height 0.25s ease, margin-bottom 0.25s ease",
       }}
     >
       {/* =====================================================
@@ -78,10 +124,13 @@ export default function Navbar() {
           maxWidth: "1280px",
           height: "100%",
           margin: "0 auto",
-          padding: isMobile ? "0 24px" : "0 32px",
+
+          padding: isMobile ? "0 20px" : "0 32px",
+
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+
           boxSizing: "border-box",
         }}
       >
@@ -89,13 +138,24 @@ export default function Navbar() {
             LOGO
         =================================================== */}
 
-        <Link
-          href="/"
+        <button
+          type="button"
+          onClick={(event) => handleNavClick(event, "home")}
+          aria-label="Go to home"
           style={{
             display: "flex",
             alignItems: "center",
+
             flexShrink: 0,
-            textDecoration: "none",
+
+            padding: 0,
+            margin: 0,
+
+            border: "none",
+            background: "transparent",
+
+            cursor: "pointer",
+
             lineHeight: 0,
           }}
         >
@@ -106,13 +166,15 @@ export default function Navbar() {
             height={70}
             priority
             style={{
-              width: isMobile ? "155px" : "195px",
+              width: isMobile ? "150px" : "195px",
               height: "auto",
+
               display: "block",
+
               objectFit: "contain",
             }}
           />
-        </Link>
+        </button>
 
         {/* ===================================================
             DESKTOP NAVIGATION
@@ -120,68 +182,125 @@ export default function Navbar() {
 
         {!isMobile && (
           <nav
+            aria-label="Main navigation"
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              gap: "clamp(22px, 2.3vw, 36px)",
+
+              gap: "clamp(18px, 2.2vw, 34px)",
+
               marginLeft: "auto",
-              marginRight: "clamp(30px, 4vw, 64px)",
+              marginRight: "clamp(24px, 3.5vw, 58px)",
             }}
           >
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  minHeight: "44px",
-                  color: item.label === "Home" ? "#293C9D" : "#FFFFFF",
-                  textDecoration: "none",
-                  fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                  fontSize: "clamp(12px, 0.9vw, 14px)",
-                  fontWeight: item.label === "Home" ? 600 : 400,
-                  lineHeight: 1.2,
-                  whiteSpace: "nowrap",
-                  letterSpacing: "0.1px",
-                }}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item, index) => {
+              const isHome = index === 0;
+
+              return (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={(event) => handleNavClick(event, item.sectionId)}
+                  style={{
+                    position: "relative",
+
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+
+                    minHeight: "44px",
+
+                    padding: "0",
+
+                    border: "none",
+                    background: "transparent",
+
+                    color: isHome ? "#293C9D" : "#FFFFFF",
+
+                    fontFamily: "var(--font-poppins), Poppins, sans-serif",
+
+                    fontSize: "clamp(12px, 0.9vw, 14px)",
+
+                    fontWeight: isHome ? 600 : 400,
+
+                    lineHeight: 1.2,
+
+                    letterSpacing: "0.1px",
+
+                    whiteSpace: "nowrap",
+
+                    cursor: "pointer",
+
+                    transition: "color 0.2s ease, opacity 0.2s ease",
+                  }}
+                  onMouseEnter={(event) => {
+                    if (!isHome) {
+                      event.currentTarget.style.color = "#293C9D";
+                    }
+                  }}
+                  onMouseLeave={(event) => {
+                    if (!isHome) {
+                      event.currentTarget.style.color = "#FFFFFF";
+                    }
+                  }}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
           </nav>
         )}
 
         {/* ===================================================
-            QUOTE BUTTON
+            DESKTOP QUOTE BUTTON
         =================================================== */}
 
         {!isMobile && (
-          <Link
-            href="/contact"
+          <button
+            type="button"
+            onClick={(event) => handleNavClick(event, "contact")}
             style={{
               width: "185px",
               height: "46px",
+
               flexShrink: 0,
+
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+
+              border: "none",
               borderRadius: "30px",
+
               background: "#293C9D",
               color: "#FFFFFF",
-              textDecoration: "none",
+
               fontFamily: "var(--font-poppins), Poppins, sans-serif",
+
               fontSize: "12px",
               fontWeight: 600,
+
               lineHeight: 1,
               letterSpacing: "0.25px",
+
+              cursor: "pointer",
+
               boxSizing: "border-box",
+
+              transition: "background 0.25s ease, transform 0.25s ease",
+            }}
+            onMouseEnter={(event) => {
+              event.currentTarget.style.background = "#222F83";
+              event.currentTarget.style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={(event) => {
+              event.currentTarget.style.background = "#293C9D";
+              event.currentTarget.style.transform = "translateY(0)";
             }}
           >
             REQUEST A QUOTE
-          </Link>
+          </button>
         )}
 
         {/* ===================================================
@@ -191,59 +310,92 @@ export default function Navbar() {
         {isMobile && (
           <button
             type="button"
-            aria-label="Toggle navigation"
+            aria-label={menuOpen ? "Close navigation" : "Open navigation"}
             aria-expanded={menuOpen}
-            onClick={() => setMenuOpen(!menuOpen)}
+            onClick={() => setMenuOpen((previous) => !previous)}
             style={{
               width: "46px",
               height: "46px",
+
               padding: "8px",
+
               border: "none",
-              borderRadius: "8px",
-              background: "transparent",
+              borderRadius: "10px",
+
+              background: "rgba(255,255,255,0.45)",
+
               display: "flex",
               flexDirection: "column",
+
               alignItems: "center",
               justifyContent: "center",
+
               gap: "5px",
+
               cursor: "pointer",
+
+              flexShrink: 0,
+
+              boxSizing: "border-box",
             }}
           >
+            {/* Top line */}
             <span
               style={{
                 display: "block",
-                width: "25px",
+
+                width: "24px",
                 height: "2px",
+
                 background: "#293C9D",
+
                 borderRadius: "2px",
-                transform: menuOpen ? "translateY(7px) rotate(45deg)" : "none",
-                transition: "all 0.25s ease",
+
+                transform: menuOpen
+                  ? "translateY(7px) rotate(45deg)"
+                  : "translateY(0) rotate(0)",
+
+                transition: "transform 0.25s ease",
               }}
             />
 
+            {/* Middle line */}
             <span
               style={{
                 display: "block",
-                width: "25px",
+
+                width: "24px",
                 height: "2px",
+
                 background: "#293C9D",
+
                 borderRadius: "2px",
+
                 opacity: menuOpen ? 0 : 1,
-                transition: "all 0.25s ease",
+
+                transform: menuOpen ? "scaleX(0)" : "scaleX(1)",
+
+                transition: "opacity 0.2s ease, transform 0.2s ease",
               }}
             />
 
+            {/* Bottom line */}
             <span
               style={{
                 display: "block",
-                width: "25px",
+
+                width: "24px",
                 height: "2px",
+
                 background: "#293C9D",
+
                 borderRadius: "2px",
+
                 transform: menuOpen
                   ? "translateY(-7px) rotate(-45deg)"
-                  : "none",
-                transition: "all 0.25s ease",
+                  : "translateY(0) rotate(0)",
+
+                transition: "transform 0.25s ease",
               }}
             />
           </button>
@@ -257,59 +409,111 @@ export default function Navbar() {
       {isMobile && menuOpen && (
         <div
           style={{
+            position: "absolute",
+
+            top: "76px",
+            left: 0,
+
             width: "100%",
-            background: "#FFFFFFE8",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            borderTop: "1px solid rgba(255, 255, 255, 0.2)",
-            padding: "12px 24px 24px",
+
+            background: "rgba(255,255,255,0.94)",
+
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+
+            borderTop: "1px solid rgba(255,255,255,0.4)",
+
+            boxShadow: "0 12px 30px rgba(0,0,0,0.08)",
+
+            padding: "10px 20px 20px",
+
             boxSizing: "border-box",
           }}
         >
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              onClick={() => setMenuOpen(false)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                width: "100%",
-                minHeight: "52px",
-                color: item.label === "Home" ? "#293C9D" : "#222222",
-                textDecoration: "none",
-                fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                fontSize: "15px",
-                fontWeight: item.label === "Home" ? 600 : 400,
-                borderBottom: "1px solid rgba(0, 0, 0, 0.08)",
-              }}
-            >
-              {item.label}
-            </Link>
-          ))}
-
-          <Link
-            href="/contact"
-            onClick={() => setMenuOpen(false)}
+          <nav
+            aria-label="Mobile navigation"
             style={{
               width: "100%",
-              height: "48px",
-              marginTop: "18px",
+
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "28px",
-              background: "#293C9D",
-              color: "#FFFFFF",
-              textDecoration: "none",
-              fontFamily: "var(--font-poppins), Poppins, sans-serif",
-              fontSize: "12px",
-              fontWeight: 600,
-              letterSpacing: "0.25px",
+              flexDirection: "column",
             }}
           >
-            REQUEST A QUOTE
-          </Link>
+            {navItems.map((item, index) => {
+              const isHome = index === 0;
+
+              return (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={(event) => handleNavClick(event, item.sectionId)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+
+                    width: "100%",
+                    minHeight: "50px",
+
+                    padding: "0 4px",
+
+                    border: "none",
+                    borderBottom: "1px solid rgba(0,0,0,0.07)",
+
+                    background: "transparent",
+
+                    color: isHome ? "#293C9D" : "#222222",
+
+                    textAlign: "left",
+
+                    fontFamily: "var(--font-poppins), Poppins, sans-serif",
+
+                    fontSize: "15px",
+
+                    fontWeight: isHome ? 600 : 400,
+
+                    cursor: "pointer",
+
+                    boxSizing: "border-box",
+                  }}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+
+            {/* Mobile Quote Button */}
+            <button
+              type="button"
+              onClick={(event) => handleNavClick(event, "contact")}
+              style={{
+                width: "100%",
+                height: "48px",
+
+                marginTop: "18px",
+
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+
+                border: "none",
+                borderRadius: "28px",
+
+                background: "#293C9D",
+                color: "#FFFFFF",
+
+                fontFamily: "var(--font-poppins), Poppins, sans-serif",
+
+                fontSize: "12px",
+                fontWeight: 600,
+
+                letterSpacing: "0.25px",
+
+                cursor: "pointer",
+              }}
+            >
+              REQUEST A QUOTE
+            </button>
+          </nav>
         </div>
       )}
     </header>

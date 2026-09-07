@@ -39,6 +39,7 @@ export default function Home() {
       ===================================================== */}
 
       <section
+        id="home"
         style={{
           position: "relative",
           width: "100%",

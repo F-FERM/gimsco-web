@@ -26,6 +26,7 @@ export default function AboutSection() {
 
   return (
     <section
+      id="about"
       style={{
         width: "100%",
         background: "#FFFFFF",
