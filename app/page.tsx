@@ -1,4 +1,5 @@
 import AboutSection from "@/components/AboutSection";
+import Certifications from "@/components/Certifications";
 import Home from "@/components/home/Home";
 import ProductEcosystem from "@/components/ProductEcosystem";
 import StatsSection from "@/components/StatsSection";
@@ -15,6 +16,7 @@ const page = () => {
       <WhyChooseSection/>
       <StoreSolutions/>
       <ProductEcosystem/>
+      <Certifications/>
     </main>
   );
 };
