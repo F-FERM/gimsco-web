@@ -38,18 +38,18 @@ export default function Footer() {
   const logoWidth = isSmallMobile ? "200px" : isMobile ? "250px" : "345px";
 
   const backgroundLogoSize = isSmallMobile
-    ? "250px"
+    ? "260px"
     : isMobile
-      ? "350px"
-      : "480px";
+      ? "370px"
+      : "520px";
 
-  const backgroundLogoLeft = isSmallMobile ? "50%" : isMobile ? "30%" : "205px";
-
+  // In Figma: bg logo is center-bottom, partially cut off
+  const backgroundLogoLeft = "50%";
   const backgroundLogoBottom = isSmallMobile
-    ? "-150px"
+    ? "-100px"
     : isMobile
-      ? "-180px"
-      : "-265px";
+      ? "-130px"
+      : "-160px";
 
   const topGridColumns = isMobile
     ? "1fr"
@@ -64,10 +64,7 @@ export default function Footer() {
       : "1fr 1fr 1.45fr";
 
   const topGridGap = isSmallMobile ? "24px" : isMobile ? "32px" : "70px";
-
   const bottomGridGap = isSmallMobile ? "24px" : isMobile ? "32px" : "70px";
-
-  const ctaPaddingTop = isSmallMobile ? "0" : isMobile ? "20px" : "112px";
 
   const headingSize = isSmallMobile ? "22px" : isMobile ? "26px" : "31px";
 
@@ -92,9 +89,9 @@ export default function Footer() {
         boxSizing: "border-box",
       }}
     >
-      {/* Large background GIMCSO logo */}
+      {/* Large background GIMSCO G-mark watermark — separate asset */}
       <img
-        src="/images/gimsco-logo.png"
+        src="/images/gimsco-bg-logo.png"
         alt=""
         aria-hidden="true"
         style={{
@@ -104,10 +101,10 @@ export default function Footer() {
           objectFit: "contain",
           left: backgroundLogoLeft,
           bottom: backgroundLogoBottom,
-          opacity: 0.12,
+          opacity: 0.55,
           pointerEvents: "none",
           userSelect: "none",
-          transform: isMobile ? "translateX(-50%)" : "none",
+          transform: "translateX(-50%)",
         }}
       />
 
@@ -124,17 +121,17 @@ export default function Footer() {
           boxSizing: "border-box",
         }}
       >
-        {/* Top row */}
+        {/* Top row: Logo | Description | (empty) */}
         <div
           style={{
             display: "grid",
             gridTemplateColumns: topGridColumns,
             columnGap: topGridGap,
-            rowGap: isMobile ? "28px" : "0",
+            rowGap: isMobile ? "20px" : "0",
             alignItems: "start",
           }}
         >
-          {/* Logo */}
+          {/* Col 1 — Logo */}
           <div>
             <img
               src="/images/gimsco-logo.png"
@@ -149,123 +146,44 @@ export default function Footer() {
             />
           </div>
 
-          {/* Company description */}
-          {(!isMobile || isTablet) && (
-            <div
-              style={{
-                paddingTop: isMobile ? "0" : "12px",
-              }}
-            >
-              <p
-                style={{
-                  margin: 0,
-                  maxWidth: "390px",
-                  fontSize: isSmallMobile ? "10px" : isMobile ? "11px" : "12px",
-                  lineHeight: isSmallMobile ? 1.3 : 1.35,
-                  fontWeight: 400,
-                  color: "rgba(255,255,255,0.68)",
-                }}
-              >
-                Gulf International Marine Services Co. has served the maritime
-                industry since 1990, offering comprehensive ship chandling for
-                vessels operating worldwide.
-              </p>
-            </div>
-          )}
-
-          {/* CTA heading */}
+          {/* Col 2 — Company description */}
           <div
             style={{
-              paddingTop: ctaPaddingTop,
+              paddingTop: isMobile ? "0" : "4px",
             }}
           >
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                height: "20px",
-                padding: "0 10px",
-                borderRadius: "999px",
-                background: "rgba(255,255,255,0.10)",
-                border: "1px solid rgba(255,255,255,0.18)",
-                boxSizing: "border-box",
-                marginBottom: isSmallMobile ? "6px" : "8px",
-              }}
-            >
-              <span
-                style={{
-                  width: "6px",
-                  height: "6px",
-                  borderRadius: "50%",
-                  background: "#6568C9",
-                  display: "block",
-                  boxShadow: "0 0 6px rgba(101,104,201,0.8)",
-                }}
-              />
-
-              <span
-                style={{
-                  fontSize: isSmallMobile ? "8px" : "10px",
-                  lineHeight: 1,
-                  color: "rgba(255,255,255,0.65)",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Get Start With Us
-              </span>
-            </div>
-
-            <h2
+            <p
               style={{
                 margin: 0,
-                maxWidth: "470px",
-                fontSize: headingSize,
-                lineHeight: 1.2,
-                fontWeight: 300,
-                letterSpacing: isSmallMobile ? "-0.4px" : "-0.8px",
-                color: "#FFFFFF",
+                maxWidth: "390px",
+                fontSize: isSmallMobile ? "10px" : isMobile ? "11px" : "12px",
+                lineHeight: isSmallMobile ? 1.3 : 1.5,
+                fontWeight: 400,
+                color: "rgba(255,255,255,0.68)",
               }}
             >
-              Maritime Operations Never
-              <br />
-              Stop. Neither Do We.
-            </h2>
-
-            <a
-              href="#contact"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: isSmallMobile ? "140px" : "165px",
-                height: isSmallMobile ? "32px" : "36px",
-                marginTop: isSmallMobile ? "8px" : "12px",
-                borderRadius: "999px",
-                background: "#353FA5",
-                color: "#FFFFFF",
-                textDecoration: "none",
-                fontSize: isSmallMobile ? "8px" : "10px",
-                fontWeight: 500,
-                boxSizing: "border-box",
-              }}
-            >
-              REQUEST A QUOTE
-            </a>
+              Gulf International Marine Services Co. has served the maritime
+              industry since 1990, offering comprehensive ship chandling for
+              vessels operating worldwide.
+            </p>
           </div>
+
+          {/* Col 3 — Empty on top row (matches Figma: description is top-right, CTA is bottom-right) */}
+          {!isMobile && <div />}
         </div>
 
-        {/* Lower content */}
+        {/* Bottom row: Navigate | Contact | CTA */}
         <div
           style={{
             display: "grid",
             gridTemplateColumns: bottomGridColumns,
             columnGap: bottomGridGap,
             rowGap: isMobile ? "24px" : "0",
-            marginTop: isSmallMobile ? "24px" : isMobile ? "28px" : "35px",
+            marginTop: isSmallMobile ? "24px" : isMobile ? "28px" : "40px",
+            alignItems: "start",
           }}
         >
-          {/* Navigation */}
+          {/* Col 1 — Navigation */}
           <div>
             <h3
               style={{
@@ -308,7 +226,7 @@ export default function Footer() {
             </nav>
           </div>
 
-          {/* Contact */}
+          {/* Col 2 — Contact */}
           <div>
             <h3
               style={{
@@ -340,14 +258,93 @@ export default function Footer() {
                 Downtown, Dubai, UAE
               </div>
 
-              <div>+971 054 796 5591</div>
+              <div>+971 4 442 0575</div>
 
               <div>gimsco@emirates.net.ae</div>
             </div>
           </div>
 
-          {/* Empty area to maintain Figma layout */}
-          {!isMobile && <div />}
+          {/* Col 3 — CTA (bottom-right, matches Figma) */}
+          <div>
+            {/* "Get Start With Us" pill */}
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                height: "22px",
+                padding: "0 12px",
+                borderRadius: "999px",
+                background: "rgba(255,255,255,0.10)",
+                border: "1px solid rgba(255,255,255,0.18)",
+                boxSizing: "border-box",
+                marginBottom: isSmallMobile ? "8px" : "10px",
+              }}
+            >
+              <span
+                style={{
+                  width: "6px",
+                  height: "6px",
+                  borderRadius: "50%",
+                  background: "#6568C9",
+                  display: "block",
+                  flexShrink: 0,
+                  boxShadow: "0 0 6px rgba(101,104,201,0.8)",
+                }}
+              />
+
+              <span
+                style={{
+                  fontSize: isSmallMobile ? "8px" : "10px",
+                  lineHeight: 1,
+                  color: "rgba(255,255,255,0.65)",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Get Start With Us
+              </span>
+            </div>
+
+            {/* Heading */}
+            <h2
+              style={{
+                margin: 0,
+                maxWidth: "470px",
+                fontSize: headingSize,
+                lineHeight: 1.2,
+                fontWeight: 300,
+                letterSpacing: isSmallMobile ? "-0.4px" : "-0.8px",
+                color: "#FFFFFF",
+              }}
+            >
+              Maritime Operations Never
+              <br />
+              Stop. Neither Do We.
+            </h2>
+
+            {/* CTA Button */}
+            <a
+              href="#contact"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: isSmallMobile ? "140px" : "165px",
+                height: isSmallMobile ? "34px" : "38px",
+                marginTop: isSmallMobile ? "10px" : "16px",
+                borderRadius: "999px",
+                background: "#353FA5",
+                color: "#FFFFFF",
+                textDecoration: "none",
+                fontSize: isSmallMobile ? "8px" : "10px",
+                fontWeight: 600,
+                letterSpacing: "0.5px",
+                boxSizing: "border-box",
+              }}
+            >
+              REQUEST A QUOTE
+            </a>
+          </div>
         </div>
       </div>
 
@@ -360,10 +357,10 @@ export default function Footer() {
           maxWidth: "1088px",
           height: "1px",
           margin: isSmallMobile
-            ? "16px auto 0"
+            ? "20px auto 0"
             : isMobile
-              ? "20px auto 0"
-              : "0 auto",
+              ? "24px auto 0"
+              : "28px auto 0",
           background: "rgba(255,255,255,0.16)",
         }}
       />
@@ -404,7 +401,7 @@ export default function Footer() {
             }}
           >
             <a
-              href="#"
+              href="https://www.facebook.com/share/1D1eK8Bkjc/?mibextid=wwXIfr"
               style={{
                 color: "#6568C9",
                 textDecoration: "none",
@@ -416,7 +413,7 @@ export default function Footer() {
             </a>
 
             <a
-              href="#"
+              href="https://www.instagram.com/gimsco.uae"
               style={{
                 color: "#6568C9",
                 textDecoration: "none",
@@ -428,7 +425,7 @@ export default function Footer() {
             </a>
 
             <a
-              href="#"
+              href="https://www.linkedin.com/company/gimscouae"
               style={{
                 color: "#6568C9",
                 textDecoration: "none",
