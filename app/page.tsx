@@ -1,5 +1,6 @@
 import AboutSection from "@/components/AboutSection";
 import Certifications from "@/components/Certifications";
+import CompanyHistory from "@/components/CompanyHistory";
 import Home from "@/components/home/Home";
 import ProductEcosystem from "@/components/ProductEcosystem";
 import StatsSection from "@/components/StatsSection";
@@ -17,6 +18,7 @@ const page = () => {
       <StoreSolutions/>
       <ProductEcosystem/>
       <Certifications/>
+      <CompanyHistory/>
     </main>
   );
 };
