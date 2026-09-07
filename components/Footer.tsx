@@ -340,7 +340,7 @@ export default function Footer() {
                 Downtown, Dubai, UAE
               </div>
 
-              <div>+971 4 442 0575</div>
+              <div>+971 054 796 5591</div>
 
               <div>gimsco@emirates.net.ae</div>
             </div>
