@@ -2,6 +2,7 @@ import AboutSection from "@/components/AboutSection";
 import Certifications from "@/components/Certifications";
 import CompanyHistory from "@/components/CompanyHistory";
 import ContactSection from "@/components/ContactSection";
+import GlobalExcellence from "@/components/GlobalExcellence";
 import Home from "@/components/home/Home";
 import MaritimeRequirements from "@/components/MaritimeRequirements";
 import ProductEcosystem from "@/components/ProductEcosystem";
@@ -19,6 +20,7 @@ const page = () => {
       <AboutSection />
       <WhyChooseSection/>
       <StoreSolutions/>
+      <GlobalExcellence/>
       <ProductEcosystem/>
       <Certifications/>
       <CompanyHistory/>
