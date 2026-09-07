@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 const services = [
   {
@@ -52,6 +52,34 @@ const services = [
 ];
 
 export default function StoreSolutions() {
+  const [viewport, setViewport] = useState({
+    width: 1440,
+    height: 900,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  const width = viewport.width;
+
+  const isSmallMobile = width <= 480;
+  const isMobile = width <= 767;
+  const isTablet = width >= 768 && width <= 1023;
+
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -113,14 +141,74 @@ export default function StoreSolutions() {
     }
   };
 
+  const sectionPadding = isSmallMobile
+    ? "clamp(60px, 10vw, 80px) 0"
+    : isMobile
+      ? "clamp(80px, 10vw, 110px) 0"
+      : "clamp(95px, 10vw, 150px) 0";
+
+  const headingSize = isSmallMobile
+    ? "clamp(36px, 5.25vw, 48px)"
+    : isMobile
+      ? "clamp(40px, 5.25vw, 55px)"
+      : "clamp(50px, 5.25vw, 82px)";
+
+  const horizontalPadding = isSmallMobile
+    ? "clamp(16px, 11.8vw, 30px)"
+    : isMobile
+      ? "clamp(24px, 11.8vw, 50px)"
+      : "clamp(34px, 11.8vw, 196px)";
+
+  const cardWidth = isSmallMobile
+    ? "clamp(200px, 24vw, 240px)"
+    : isMobile
+      ? "clamp(240px, 24vw, 280px)"
+      : isTablet
+        ? "clamp(270px, 24vw, 320px)"
+        : "clamp(270px, 24vw, 395px)";
+
+  const cardHeight = isSmallMobile
+    ? "clamp(260px, 32vw, 300px)"
+    : isMobile
+      ? "clamp(300px, 32vw, 360px)"
+      : isTablet
+        ? "clamp(320px, 32vw, 400px)"
+        : "clamp(350px, 32vw, 510px)";
+
+  const numberSize = isSmallMobile
+    ? "clamp(10px, 0.9vw, 12px)"
+    : "clamp(12px, 0.9vw, 15px)";
+
+  const titleSize = isSmallMobile
+    ? "clamp(14px, 1.4vw, 16px)"
+    : isMobile
+      ? "clamp(16px, 1.4vw, 18px)"
+      : "clamp(18px, 1.4vw, 23px)";
+
+  const exploreSize = isSmallMobile
+    ? "clamp(10px, 1vw, 12px)"
+    : "clamp(13px, 1vw, 16px)";
+
+  const numberTop = isSmallMobile
+    ? "clamp(14px, 1.8vw, 18px)"
+    : "clamp(22px, 1.8vw, 29px)";
+
+  const numberLeft = isSmallMobile
+    ? "clamp(14px, 1.8vw, 18px)"
+    : "clamp(22px, 1.8vw, 29px)";
+
+  const titleLeft = isSmallMobile
+    ? "clamp(14px, 1.8vw, 18px)"
+    : "clamp(22px, 1.8vw, 29px)";
+
   return (
     <section
       id="services"
       style={{
         width: "100%",
         background: "#FFFFFF",
-        paddingTop: "clamp(95px, 10vw, 150px)",
-        paddingBottom: "clamp(90px, 9vw, 135px)",
+        paddingTop: sectionPadding,
+        paddingBottom: sectionPadding,
         overflow: "hidden",
         boxSizing: "border-box",
       }}
@@ -132,8 +220,8 @@ export default function StoreSolutions() {
       <div
         style={{
           width: "100%",
-          paddingLeft: "clamp(34px, 11.8vw, 196px)",
-          paddingRight: "clamp(34px, 11.8vw, 196px)",
+          paddingLeft: horizontalPadding,
+          paddingRight: horizontalPadding,
           boxSizing: "border-box",
         }}
       >
@@ -144,6 +232,8 @@ export default function StoreSolutions() {
             justifyContent: "space-between",
             alignItems: "flex-end",
             boxSizing: "border-box",
+            flexWrap: isSmallMobile ? "wrap" : "nowrap",
+            gap: isSmallMobile ? "12px" : "0",
           }}
         >
           {/* =================================================
@@ -164,9 +254,9 @@ export default function StoreSolutions() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "6px",
-                height: "23px",
-                padding: "0 10px 0 6px",
-                marginBottom: "13px",
+                height: isSmallMobile ? "20px" : "23px",
+                padding: isSmallMobile ? "0 8px 0 5px" : "0 10px 0 6px",
+                marginBottom: isSmallMobile ? "10px" : "13px",
                 borderRadius: "20px",
                 background: "#F0F1F5",
                 border: "1px solid #D9DAE2",
@@ -187,7 +277,7 @@ export default function StoreSolutions() {
                 style={{
                   color: "#777777",
                   fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                  fontSize: "9px",
+                  fontSize: isSmallMobile ? "7px" : "9px",
                   fontWeight: 400,
                   lineHeight: 1,
                   whiteSpace: "nowrap",
@@ -205,10 +295,14 @@ export default function StoreSolutions() {
                 padding: 0,
                 color: "#080808",
                 fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                fontSize: "clamp(50px, 5.25vw, 82px)",
+                fontSize: headingSize,
                 fontWeight: 300,
                 lineHeight: 1.05,
-                letterSpacing: "-3.8px",
+                letterSpacing: isSmallMobile
+                  ? "-2px"
+                  : isMobile
+                    ? "-2.5px"
+                    : "-3.8px",
               }}
             >
               Complete{" "}
@@ -237,31 +331,35 @@ export default function StoreSolutions() {
               DRAG INDICATOR
           ================================================= */}
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "9px",
-              paddingBottom: "13px",
-              color: "#777777",
-              fontFamily: "var(--font-poppins), Poppins, sans-serif",
-              fontSize: "clamp(13px, 1vw, 16px)",
-              fontWeight: 400,
-              whiteSpace: "nowrap",
-            }}
-          >
-            <span>Drag to explore</span>
-
-            <span
+          {!isSmallMobile && (
+            <div
               style={{
-                fontSize: "21px",
-                lineHeight: 1,
+                display: "flex",
+                alignItems: "center",
+                gap: "9px",
+                paddingBottom: "13px",
                 color: "#777777",
+                fontFamily: "var(--font-poppins), Poppins, sans-serif",
+                fontSize: isMobile
+                  ? "clamp(11px, 1vw, 13px)"
+                  : "clamp(13px, 1vw, 16px)",
+                fontWeight: 400,
+                whiteSpace: "nowrap",
               }}
             >
-              →
-            </span>
-          </div>
+              <span>Drag to explore</span>
+
+              <span
+                style={{
+                  fontSize: "21px",
+                  lineHeight: 1,
+                  color: "#777777",
+                }}
+              >
+                →
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -282,15 +380,19 @@ export default function StoreSolutions() {
         }}
         style={{
           width: "100%",
-          marginTop: "clamp(30px, 3vw, 40px)",
+          marginTop: isSmallMobile
+            ? "clamp(20px, 3vw, 24px)"
+            : isMobile
+              ? "clamp(24px, 3vw, 30px)"
+              : "clamp(30px, 3vw, 40px)",
           overflowX: "auto",
           overflowY: "hidden",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
           cursor: "grab",
-          paddingLeft: "clamp(34px, 11.8vw, 196px)",
+          paddingLeft: horizontalPadding,
           paddingRight: "0",
-          paddingBottom: "12px",
+          paddingBottom: isSmallMobile ? "8px" : "12px",
           boxSizing: "border-box",
 
           /*
@@ -306,7 +408,7 @@ export default function StoreSolutions() {
           style={{
             width: "max-content",
             display: "flex",
-            gap: "11px",
+            gap: isSmallMobile ? "8px" : isMobile ? "10px" : "11px",
             boxSizing: "border-box",
           }}
         >
@@ -321,11 +423,11 @@ export default function StoreSolutions() {
                 style={{
                   position: "relative",
                   display: "block",
-                  width: "clamp(270px, 24vw, 395px)",
-                  height: "clamp(350px, 32vw, 510px)",
+                  width: cardWidth,
+                  height: cardHeight,
                   flexShrink: 0,
                   overflow: "hidden",
-                  borderRadius: "17px",
+                  borderRadius: isSmallMobile ? "12px" : "17px",
                   background: "#333333",
                   boxSizing: "border-box",
                   cursor: "grab",
@@ -393,11 +495,11 @@ export default function StoreSolutions() {
                 <div
                   style={{
                     position: "absolute",
-                    top: "clamp(22px, 1.8vw, 29px)",
-                    left: "clamp(22px, 1.8vw, 29px)",
+                    top: numberTop,
+                    left: numberLeft,
                     color: "#FFFFFF",
                     fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                    fontSize: "clamp(12px, 0.9vw, 15px)",
+                    fontSize: numberSize,
                     fontWeight: 400,
                     lineHeight: 1,
                     zIndex: 3,
@@ -414,12 +516,16 @@ export default function StoreSolutions() {
                 <div
                   style={{
                     position: "absolute",
-                    left: "clamp(22px, 1.8vw, 29px)",
+                    left: titleLeft,
                     right: "20px",
-                    bottom: isHovered ? "72px" : "31px",
+                    bottom: isHovered
+                      ? "56px"
+                      : isSmallMobile
+                        ? "24px"
+                        : "31px",
                     color: "#FFFFFF",
                     fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                    fontSize: "clamp(18px, 1.4vw, 23px)",
+                    fontSize: titleSize,
                     fontWeight: 400,
                     lineHeight: 1.2,
                     letterSpacing: "-0.4px",
@@ -438,14 +544,14 @@ export default function StoreSolutions() {
                 <div
                   style={{
                     position: "absolute",
-                    left: "clamp(22px, 1.8vw, 29px)",
-                    bottom: "30px",
+                    left: titleLeft,
+                    bottom: isSmallMobile ? "18px" : "30px",
                     display: "flex",
                     alignItems: "center",
-                    gap: "9px",
+                    gap: isSmallMobile ? "6px" : "9px",
                     color: "#6268D1",
                     fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                    fontSize: "clamp(13px, 1vw, 16px)",
+                    fontSize: exploreSize,
                     fontWeight: 500,
                     lineHeight: 1,
                     opacity: isHovered ? 1 : 0,

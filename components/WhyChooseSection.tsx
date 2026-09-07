@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const reasons = [
   {
@@ -49,15 +49,100 @@ const reasons = [
 ];
 
 export default function WhyChooseSection() {
+  const [viewport, setViewport] = useState({
+    width: 1440,
+    height: 900,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  const width = viewport.width;
+
+  const isSmallMobile = width <= 480;
+  const isMobile = width <= 767;
+  const isTablet = width >= 768 && width <= 1023;
+
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const sectionPadding = isSmallMobile
+    ? "50px 14px 55px"
+    : isMobile
+      ? "clamp(70px, 7vw, 80px) 20px clamp(80px, 8vw, 90px)"
+      : "clamp(70px, 7vw, 105px) clamp(24px, 5vw, 70px) clamp(80px, 8vw, 115px)";
+
+  const headingSize = isSmallMobile
+    ? "clamp(32px, 5vw, 42px)"
+    : isMobile
+      ? "clamp(42px, 5vw, 52px)"
+      : "clamp(42px, 5vw, 68px)";
+
+  const reasonMinHeight = isSmallMobile ? "60px" : isMobile ? "70px" : "82px";
+
+  const reasonPadding = isSmallMobile
+    ? "16px 16px"
+    : isMobile
+      ? "0 20px"
+      : "0 38px";
+
+  const gridColumns = isSmallMobile
+    ? "50px minmax(120px, 1fr)"
+    : isMobile
+      ? "60px minmax(150px, 1fr) minmax(200px, 1fr)"
+      : "80px minmax(280px, 1fr) minmax(390px, 1fr)";
+
+  const columnGap = isSmallMobile ? "12px" : isMobile ? "16px" : "30px";
+
+  const titleSize = isSmallMobile
+    ? "clamp(14px, 1.6vw, 17px)"
+    : isMobile
+      ? "clamp(17px, 1.6vw, 20px)"
+      : "clamp(20px, 1.6vw, 25px)";
+
+  const descSize = isSmallMobile
+    ? "clamp(10px, 1vw, 11px)"
+    : isMobile
+      ? "clamp(11px, 0.82vw, 12px)"
+      : "clamp(13px, 1vw, 15px)";
+
+  const numberSize = isSmallMobile
+    ? "clamp(10px, 1vw, 12px)"
+    : "clamp(13px, 1vw, 15px)";
+
+  const imageHeight = isSmallMobile ? "120px" : isMobile ? "150px" : "190px";
+
+  const imageMargin = isSmallMobile
+    ? "0 30px 16px"
+    : isMobile
+      ? "0 40px 20px"
+      : "0 56px 25px";
+
+  const imageWidth = isSmallMobile
+    ? "calc(100% - 60px)"
+    : isMobile
+      ? "calc(100% - 80px)"
+      : "calc(100% - 112px)";
 
   return (
     <section
       style={{
         width: "100%",
         background: "#F2F2FA",
-        padding:
-          "clamp(70px, 7vw, 105px) clamp(24px, 5vw, 70px) clamp(80px, 8vw, 115px)",
+        padding: sectionPadding,
         boxSizing: "border-box",
       }}
     >
@@ -77,7 +162,11 @@ export default function WhyChooseSection() {
           style={{
             width: "100%",
             textAlign: "center",
-            marginBottom: "clamp(32px, 3vw, 45px)",
+            marginBottom: isSmallMobile
+              ? "clamp(20px, 3vw, 24px)"
+              : isMobile
+                ? "clamp(32px, 3vw, 36px)"
+                : "clamp(32px, 3vw, 45px)",
             padding: "0 15px",
             boxSizing: "border-box",
           }}
@@ -88,10 +177,10 @@ export default function WhyChooseSection() {
               padding: 0,
               color: "#111111",
               fontFamily: "var(--font-poppins), Poppins, sans-serif",
-              fontSize: "clamp(42px, 5vw, 68px)",
+              fontSize: headingSize,
               fontWeight: 300,
               lineHeight: 1.08,
-              letterSpacing: "-2.8px",
+              letterSpacing: isSmallMobile ? "-1.5px" : "-2.8px",
             }}
           >
             Why Choose{" "}
@@ -108,12 +197,16 @@ export default function WhyChooseSection() {
           <p
             style={{
               maxWidth: "650px",
-              margin: "12px auto 0",
+              margin: isSmallMobile ? "8px auto 0" : "12px auto 0",
               color: "#777777",
               fontFamily: "var(--font-poppins), Poppins, sans-serif",
-              fontSize: "clamp(12px, 0.95vw, 14px)",
+              fontSize: isSmallMobile
+                ? "10px"
+                : isMobile
+                  ? "clamp(11px, 0.95vw, 12px)"
+                  : "clamp(12px, 0.95vw, 14px)",
               fontWeight: 400,
-              lineHeight: 1.55,
+              lineHeight: isSmallMobile ? 1.4 : 1.55,
             }}
           >
             Eight reasons ship owners, fleet managers and marine procurement
@@ -130,7 +223,7 @@ export default function WhyChooseSection() {
             width: "100%",
             display: "flex",
             flexDirection: "column",
-            gap: "11px",
+            gap: isSmallMobile ? "8px" : "11px",
           }}
         >
           {reasons.map((reason, index) => {
@@ -147,7 +240,7 @@ export default function WhyChooseSection() {
                   border: isActive
                     ? "1px solid rgba(93, 99, 196, 0.4)"
                     : "1px solid #DDDEE7",
-                  borderRadius: "13px",
+                  borderRadius: isSmallMobile ? "10px" : "13px",
                   boxShadow: isActive
                     ? "0 8px 25px rgba(0, 0, 0, 0.07)"
                     : "0 2px 5px rgba(0, 0, 0, 0.035)",
@@ -163,13 +256,25 @@ export default function WhyChooseSection() {
                 <div
                   style={{
                     width: "100%",
-                    minHeight: isActive ? "125px" : "82px",
-                    padding: isActive ? "25px 38px 20px" : "0 38px",
+                    minHeight: isActive
+                      ? isSmallMobile
+                        ? "80px"
+                        : isMobile
+                          ? "100px"
+                          : "125px"
+                      : reasonMinHeight,
+                    padding: isActive
+                      ? isSmallMobile
+                        ? "16px 16px"
+                        : isMobile
+                          ? "20px 20px"
+                          : "25px 38px 20px"
+                      : reasonPadding,
                     display: "grid",
-                    gridTemplateColumns:
-                      "80px minmax(280px, 1fr) minmax(390px, 1fr)",
+                    gridTemplateColumns: gridColumns,
                     alignItems: "center",
-                    columnGap: "30px",
+                    columnGap: columnGap,
+                    rowGap: isSmallMobile ? "4px" : "0",
                     boxSizing: "border-box",
                     transition: "min-height 0.3s ease, padding 0.3s ease",
                   }}
@@ -180,7 +285,7 @@ export default function WhyChooseSection() {
                     style={{
                       color: "#171717",
                       fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                      fontSize: "clamp(13px, 1vw, 15px)",
+                      fontSize: numberSize,
                       fontWeight: 500,
                       lineHeight: 1,
                     }}
@@ -194,7 +299,7 @@ export default function WhyChooseSection() {
                     style={{
                       color: isActive ? "#5260D0" : "#151515",
                       fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                      fontSize: "clamp(20px, 1.6vw, 25px)",
+                      fontSize: titleSize,
                       fontWeight: 500,
                       lineHeight: 1.25,
                       letterSpacing: "-0.5px",
@@ -206,21 +311,25 @@ export default function WhyChooseSection() {
 
                   {/* DESCRIPTION */}
 
-                  <div
-                    style={{
-                      color: "#777777",
-                      fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                      fontSize: isActive
-                        ? "clamp(13px, 1vw, 15px)"
-                        : "clamp(11px, 0.82vw, 13px)",
-                      fontWeight: 400,
-                      lineHeight: 1.5,
-                      maxWidth: "560px",
-                      transition: "font-size 0.25s ease",
-                    }}
-                  >
-                    {reason.description}
-                  </div>
+                  {!isSmallMobile && (
+                    <div
+                      style={{
+                        color: "#777777",
+                        fontFamily: "var(--font-poppins), Poppins, sans-serif",
+                        fontSize: isActive
+                          ? descSize
+                          : isMobile
+                            ? "clamp(10px, 0.82vw, 11px)"
+                            : "clamp(11px, 0.82vw, 13px)",
+                        fontWeight: 400,
+                        lineHeight: isSmallMobile ? 1.3 : 1.5,
+                        maxWidth: "560px",
+                        transition: "font-size 0.25s ease",
+                      }}
+                    >
+                      {reason.description}
+                    </div>
+                  )}
                 </div>
 
                 {/* =================================================
@@ -229,11 +338,13 @@ export default function WhyChooseSection() {
 
                 <div
                   style={{
-                    width: "calc(100% - 112px)",
-                    height: isActive ? "190px" : "0px",
-                    margin: isActive ? "0 56px 25px" : "0 56px",
+                    width: imageWidth,
+                    height: isActive ? imageHeight : "0px",
+                    margin: isActive
+                      ? imageMargin
+                      : `0 ${isSmallMobile ? "30px" : isMobile ? "40px" : "56px"}`,
                     position: "relative",
-                    borderRadius: "17px",
+                    borderRadius: isSmallMobile ? "12px" : "17px",
                     overflow: "hidden",
                     opacity: isActive ? 1 : 0,
                     transform: isActive ? "translateY(0)" : "translateY(-10px)",
@@ -246,7 +357,7 @@ export default function WhyChooseSection() {
                     src={reason.image}
                     alt={reason.title}
                     fill
-                    sizes="(max-width: 768px) 90vw, 1150px"
+                    sizes="(max-width: 480px) 90vw, (max-width: 767px) 90vw, 1150px"
                     style={{
                       objectFit: "cover",
                       objectPosition: "center",
@@ -262,6 +373,22 @@ export default function WhyChooseSection() {
                     }}
                   />
                 </div>
+
+                {/* Mobile description */}
+                {isSmallMobile && isActive && (
+                  <div
+                    style={{
+                      padding: "0 16px 16px",
+                      color: "#777777",
+                      fontFamily: "var(--font-poppins), Poppins, sans-serif",
+                      fontSize: "10px",
+                      fontWeight: 400,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {reason.description}
+                  </div>
+                )}
               </div>
             );
           })}

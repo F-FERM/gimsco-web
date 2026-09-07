@@ -1,6 +1,6 @@
-// components/home/QualityValue.tsx
+"use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const stats = [
   {
@@ -30,12 +30,82 @@ const stats = [
 ];
 
 export default function QualityValue() {
+  const [viewport, setViewport] = useState({
+    width: 1440,
+    height: 900,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  const width = viewport.width;
+
+  const isSmallMobile = width <= 480;
+  const isMobile = width <= 767;
+  const isTablet = width >= 768 && width <= 1023;
+
+  const sectionPadding = isSmallMobile
+    ? "clamp(50px, 7vw, 65px) 16px"
+    : isMobile
+      ? "clamp(65px, 7vw, 80px) 20px"
+      : "clamp(65px, 7vw, 95px) 24px";
+
+  const headingSize = isSmallMobile
+    ? "clamp(32px, 5vw, 42px)"
+    : isMobile
+      ? "clamp(42px, 5vw, 52px)"
+      : "clamp(42px, 5vw, 64px)";
+
+  const statValueSize = isSmallMobile
+    ? "clamp(26px, 3.2vw, 34px)"
+    : isMobile
+      ? "clamp(32px, 3.2vw, 40px)"
+      : "clamp(32px, 3.2vw, 44px)";
+
+  const statLabelSize = isSmallMobile
+    ? "clamp(9px, 0.9vw, 11px)"
+    : isMobile
+      ? "clamp(11px, 0.9vw, 12px)"
+      : "clamp(11px, 0.9vw, 14px)";
+
+  const statsMarginTop = isSmallMobile ? "32px" : isMobile ? "40px" : "58px";
+
+  const statsGridColumns = isSmallMobile
+    ? "repeat(2, minmax(0, 1fr))"
+    : isMobile
+      ? "repeat(2, minmax(0, 1fr))"
+      : isTablet
+        ? "repeat(3, minmax(0, 1fr))"
+        : "repeat(3, minmax(0, 1fr))";
+
+  const statMinHeight = isSmallMobile ? "80px" : isMobile ? "90px" : "110px";
+
+  const statPadding = isSmallMobile
+    ? "12px 12px 12px 0"
+    : isMobile
+      ? "16px 16px 14px 0"
+      : "18px 28px 16px 0";
+
   return (
     <section
       style={{
         position: "relative",
         width: "100%",
-        minHeight: "520px",
+        minHeight: isSmallMobile ? "auto" : "520px",
         overflow: "hidden",
         boxSizing: "border-box",
       }}
@@ -48,7 +118,7 @@ export default function QualityValue() {
           width: "100%",
           height: "100%",
           backgroundImage: "url('/images/quality-value-bg.jpg')",
-          backgroundSize: "100% 100%",
+          backgroundSize: isSmallMobile ? "cover" : "100% 100%",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
@@ -71,9 +141,9 @@ export default function QualityValue() {
           zIndex: 2,
           width: "100%",
           maxWidth: "1080px",
-          minHeight: "520px",
+          minHeight: isSmallMobile ? "auto" : "520px",
           margin: "0 auto",
-          padding: "clamp(65px, 7vw, 95px) 24px",
+          padding: sectionPadding,
           boxSizing: "border-box",
           display: "flex",
           flexDirection: "column",
@@ -85,10 +155,10 @@ export default function QualityValue() {
           style={{
             margin: 0,
             fontFamily: "var(--font-poppins), Poppins, sans-serif",
-            fontSize: "clamp(42px, 5vw, 64px)",
+            fontSize: headingSize,
             fontWeight: 300,
             lineHeight: 1.15,
-            letterSpacing: "-2px",
+            letterSpacing: isSmallMobile ? "-1px" : "-2px",
             color: "#FFFFFF",
           }}
         >
@@ -108,22 +178,23 @@ export default function QualityValue() {
         <div
           style={{
             width: "100%",
-            marginTop: "58px",
+            marginTop: statsMarginTop,
             display: "grid",
-            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gridTemplateColumns: statsGridColumns,
             boxSizing: "border-box",
           }}
         >
           {stats.map((stat, index) => {
-            const isTopRow = index < 3;
+            const itemsPerRow = isSmallMobile ? 2 : isMobile ? 2 : 3;
+            const isTopRow = index < itemsPerRow;
 
             return (
               <div
                 key={stat.label}
                 style={{
                   minWidth: 0,
-                  minHeight: "110px",
-                  padding: "18px 28px 16px 0",
+                  minHeight: statMinHeight,
+                  padding: statPadding,
                   boxSizing: "border-box",
 
                   borderTop: isTopRow
@@ -135,7 +206,7 @@ export default function QualityValue() {
                     : "none",
 
                   borderRight:
-                    index % 3 !== 2
+                    index % itemsPerRow !== itemsPerRow - 1
                       ? "1px solid rgba(255,255,255,0.10)"
                       : "none",
                 }}
@@ -144,7 +215,7 @@ export default function QualityValue() {
                 <div
                   style={{
                     fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                    fontSize: "clamp(32px, 3.2vw, 44px)",
+                    fontSize: statValueSize,
                     fontWeight: 300,
                     lineHeight: 1.05,
                     letterSpacing: "-1.5px",
@@ -158,11 +229,11 @@ export default function QualityValue() {
                 {/* Label */}
                 <div
                   style={{
-                    marginTop: "7px",
+                    marginTop: isSmallMobile ? "4px" : "7px",
                     fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                    fontSize: "clamp(11px, 0.9vw, 14px)",
+                    fontSize: statLabelSize,
                     fontWeight: 400,
-                    lineHeight: 1.3,
+                    lineHeight: isSmallMobile ? 1.2 : 1.3,
                     color: "rgba(255,255,255,0.82)",
                   }}
                 >

@@ -1,16 +1,90 @@
+"use client";
+
 // components/Footer.tsx
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const navigation = ["Home", "About", "Services", "Certification", "Contact Us"];
 
 export default function Footer() {
+  const [viewport, setViewport] = useState({
+    width: 1440,
+    height: 900,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  const width = viewport.width;
+
+  const isSmallMobile = width <= 480;
+  const isMobile = width <= 767;
+  const isTablet = width >= 768 && width <= 1023;
+
+  const logoWidth = isSmallMobile ? "200px" : isMobile ? "250px" : "345px";
+
+  const backgroundLogoSize = isSmallMobile
+    ? "250px"
+    : isMobile
+      ? "350px"
+      : "480px";
+
+  const backgroundLogoLeft = isSmallMobile ? "50%" : isMobile ? "30%" : "205px";
+
+  const backgroundLogoBottom = isSmallMobile
+    ? "-150px"
+    : isMobile
+      ? "-180px"
+      : "-265px";
+
+  const topGridColumns = isMobile
+    ? "1fr"
+    : isTablet
+      ? "1fr 1fr"
+      : "1fr 1fr 1.45fr";
+
+  const bottomGridColumns = isMobile
+    ? "1fr"
+    : isTablet
+      ? "1fr 1fr"
+      : "1fr 1fr 1.45fr";
+
+  const topGridGap = isSmallMobile ? "24px" : isMobile ? "32px" : "70px";
+
+  const bottomGridGap = isSmallMobile ? "24px" : isMobile ? "32px" : "70px";
+
+  const ctaPaddingTop = isSmallMobile ? "0" : isMobile ? "20px" : "112px";
+
+  const headingSize = isSmallMobile ? "22px" : isMobile ? "26px" : "31px";
+
+  const mainPadding = isSmallMobile
+    ? "20px 16px 0"
+    : isMobile
+      ? "25px 20px 0"
+      : "30px 38px 0";
+
+  const bottomPadding = isSmallMobile ? "10px 8px 8px" : "14px 12px 10px";
+
   return (
     <footer
       style={{
         position: "relative",
         width: "100%",
-        minHeight: "430px",
+        minHeight: isSmallMobile ? "auto" : isMobile ? "auto" : "430px",
         overflow: "hidden",
         background: "#03083D",
         color: "#010738",
@@ -25,14 +99,15 @@ export default function Footer() {
         aria-hidden="true"
         style={{
           position: "absolute",
-          width: "480px",
-          height: "480px",
+          width: backgroundLogoSize,
+          height: backgroundLogoSize,
           objectFit: "contain",
-          left: "205px",
-          bottom: "-265px",
+          left: backgroundLogoLeft,
+          bottom: backgroundLogoBottom,
           opacity: 0.12,
           pointerEvents: "none",
           userSelect: "none",
+          transform: isMobile ? "translateX(-50%)" : "none",
         }}
       />
 
@@ -45,7 +120,7 @@ export default function Footer() {
           maxWidth: "1140px",
           minHeight: "330px",
           margin: "0 auto",
-          padding: "30px 38px 0",
+          padding: mainPadding,
           boxSizing: "border-box",
         }}
       >
@@ -53,8 +128,9 @@ export default function Footer() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1.45fr",
-            columnGap: "70px",
+            gridTemplateColumns: topGridColumns,
+            columnGap: topGridGap,
+            rowGap: isMobile ? "28px" : "0",
             alignItems: "start",
           }}
         >
@@ -65,7 +141,7 @@ export default function Footer() {
               alt="GIMSCO"
               style={{
                 display: "block",
-                width: "345px",
+                width: logoWidth,
                 maxWidth: "100%",
                 height: "auto",
                 objectFit: "contain",
@@ -74,31 +150,33 @@ export default function Footer() {
           </div>
 
           {/* Company description */}
-          <div
-            style={{
-              paddingTop: "12px",
-            }}
-          >
-            <p
+          {(!isMobile || isTablet) && (
+            <div
               style={{
-                margin: 0,
-                maxWidth: "390px",
-                fontSize: "12px",
-                lineHeight: 1.35,
-                fontWeight: 400,
-                color: "rgba(255,255,255,0.68)",
+                paddingTop: isMobile ? "0" : "12px",
               }}
             >
-              Gulf International Marine Services Co. has served the maritime
-              industry since 1990, offering comprehensive ship chandling for
-              vessels operating worldwide.
-            </p>
-          </div>
+              <p
+                style={{
+                  margin: 0,
+                  maxWidth: "390px",
+                  fontSize: isSmallMobile ? "10px" : isMobile ? "11px" : "12px",
+                  lineHeight: isSmallMobile ? 1.3 : 1.35,
+                  fontWeight: 400,
+                  color: "rgba(255,255,255,0.68)",
+                }}
+              >
+                Gulf International Marine Services Co. has served the maritime
+                industry since 1990, offering comprehensive ship chandling for
+                vessels operating worldwide.
+              </p>
+            </div>
+          )}
 
           {/* CTA heading */}
           <div
             style={{
-              paddingTop: "112px",
+              paddingTop: ctaPaddingTop,
             }}
           >
             <div
@@ -112,7 +190,7 @@ export default function Footer() {
                 background: "rgba(255,255,255,0.10)",
                 border: "1px solid rgba(255,255,255,0.18)",
                 boxSizing: "border-box",
-                marginBottom: "8px",
+                marginBottom: isSmallMobile ? "6px" : "8px",
               }}
             >
               <span
@@ -128,7 +206,7 @@ export default function Footer() {
 
               <span
                 style={{
-                  fontSize: "10px",
+                  fontSize: isSmallMobile ? "8px" : "10px",
                   lineHeight: 1,
                   color: "rgba(255,255,255,0.65)",
                   whiteSpace: "nowrap",
@@ -142,10 +220,10 @@ export default function Footer() {
               style={{
                 margin: 0,
                 maxWidth: "470px",
-                fontSize: "31px",
+                fontSize: headingSize,
                 lineHeight: 1.2,
                 fontWeight: 300,
-                letterSpacing: "-0.8px",
+                letterSpacing: isSmallMobile ? "-0.4px" : "-0.8px",
                 color: "#FFFFFF",
               }}
             >
@@ -160,14 +238,14 @@ export default function Footer() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: "165px",
-                height: "36px",
-                marginTop: "12px",
+                width: isSmallMobile ? "140px" : "165px",
+                height: isSmallMobile ? "32px" : "36px",
+                marginTop: isSmallMobile ? "8px" : "12px",
                 borderRadius: "999px",
                 background: "#353FA5",
                 color: "#FFFFFF",
                 textDecoration: "none",
-                fontSize: "10px",
+                fontSize: isSmallMobile ? "8px" : "10px",
                 fontWeight: 500,
                 boxSizing: "border-box",
               }}
@@ -181,9 +259,10 @@ export default function Footer() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1.45fr",
-            columnGap: "70px",
-            marginTop: "35px",
+            gridTemplateColumns: bottomGridColumns,
+            columnGap: bottomGridGap,
+            rowGap: isMobile ? "24px" : "0",
+            marginTop: isSmallMobile ? "24px" : isMobile ? "28px" : "35px",
           }}
         >
           {/* Navigation */}
@@ -191,7 +270,7 @@ export default function Footer() {
             <h3
               style={{
                 margin: "0 0 9px",
-                fontSize: "14px",
+                fontSize: isSmallMobile ? "12px" : "14px",
                 lineHeight: 1.2,
                 fontWeight: 500,
                 color: "#6568C9",
@@ -204,7 +283,7 @@ export default function Footer() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "7px",
+                gap: isSmallMobile ? "5px" : "7px",
               }}
             >
               {navigation.map((item) => (
@@ -218,7 +297,7 @@ export default function Footer() {
                   style={{
                     color: "rgba(255,255,255,0.62)",
                     textDecoration: "none",
-                    fontSize: "12px",
+                    fontSize: isSmallMobile ? "10px" : "12px",
                     lineHeight: 1.25,
                     fontWeight: 400,
                   }}
@@ -234,7 +313,7 @@ export default function Footer() {
             <h3
               style={{
                 margin: "0 0 9px",
-                fontSize: "14px",
+                fontSize: isSmallMobile ? "12px" : "14px",
                 lineHeight: 1.2,
                 fontWeight: 500,
                 color: "#6568C9",
@@ -247,9 +326,9 @@ export default function Footer() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "7px",
-                fontSize: "12px",
-                lineHeight: 1.25,
+                gap: isSmallMobile ? "5px" : "7px",
+                fontSize: isSmallMobile ? "10px" : "12px",
+                lineHeight: isSmallMobile ? 1.2 : 1.25,
                 color: "rgba(255,255,255,0.62)",
               }}
             >
@@ -268,7 +347,7 @@ export default function Footer() {
           </div>
 
           {/* Empty area to maintain Figma layout */}
-          <div />
+          {!isMobile && <div />}
         </div>
       </div>
 
@@ -277,10 +356,14 @@ export default function Footer() {
         style={{
           position: "relative",
           zIndex: 3,
-          width: "calc(100% - 48px)",
+          width: isSmallMobile ? "calc(100% - 32px)" : "calc(100% - 48px)",
           maxWidth: "1088px",
           height: "1px",
-          margin: "0 auto",
+          margin: isSmallMobile
+            ? "16px auto 0"
+            : isMobile
+              ? "20px auto 0"
+              : "0 auto",
           background: "rgba(255,255,255,0.16)",
         }}
       />
@@ -292,9 +375,9 @@ export default function Footer() {
           zIndex: 3,
           width: "100%",
           maxWidth: "1088px",
-          minHeight: "88px",
+          minHeight: isSmallMobile ? "70px" : isMobile ? "80px" : "88px",
           margin: "0 auto",
-          padding: "14px 12px 10px",
+          padding: bottomPadding,
           boxSizing: "border-box",
           display: "flex",
           flexDirection: "column",
@@ -308,6 +391,8 @@ export default function Footer() {
             alignItems: "center",
             justifyContent: "space-between",
             width: "100%",
+            flexWrap: isSmallMobile ? "wrap" : "nowrap",
+            gap: isSmallMobile ? "8px" : "0",
           }}
         >
           {/* Social links */}
@@ -315,7 +400,7 @@ export default function Footer() {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "24px",
+              gap: isSmallMobile ? "16px" : "24px",
             }}
           >
             <a
@@ -323,7 +408,7 @@ export default function Footer() {
               style={{
                 color: "#6568C9",
                 textDecoration: "none",
-                fontSize: "12px",
+                fontSize: isSmallMobile ? "10px" : "12px",
                 fontWeight: 500,
               }}
             >
@@ -335,7 +420,7 @@ export default function Footer() {
               style={{
                 color: "#6568C9",
                 textDecoration: "none",
-                fontSize: "12px",
+                fontSize: isSmallMobile ? "10px" : "12px",
                 fontWeight: 500,
               }}
             >
@@ -347,7 +432,7 @@ export default function Footer() {
               style={{
                 color: "#6568C9",
                 textDecoration: "none",
-                fontSize: "12px",
+                fontSize: isSmallMobile ? "10px" : "12px",
                 fontWeight: 500,
               }}
             >
@@ -360,7 +445,7 @@ export default function Footer() {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "28px",
+              gap: isSmallMobile ? "16px" : "28px",
             }}
           >
             <a
@@ -368,7 +453,7 @@ export default function Footer() {
               style={{
                 color: "rgba(255,255,255,0.38)",
                 textDecoration: "none",
-                fontSize: "12px",
+                fontSize: isSmallMobile ? "9px" : "12px",
               }}
             >
               Privacy Policy
@@ -379,7 +464,7 @@ export default function Footer() {
               style={{
                 color: "rgba(255,255,255,0.38)",
                 textDecoration: "none",
-                fontSize: "12px",
+                fontSize: isSmallMobile ? "9px" : "12px",
               }}
             >
               Terms of Service
@@ -392,9 +477,10 @@ export default function Footer() {
           style={{
             width: "100%",
             textAlign: "center",
-            fontSize: "11px",
+            fontSize: isSmallMobile ? "9px" : "11px",
             lineHeight: 1.3,
             color: "rgba(255,255,255,0.32)",
+            marginTop: isSmallMobile ? "6px" : "0",
           }}
         >
           © 2026 GIMSCO — Gulf International Marine Services Co. All Rights

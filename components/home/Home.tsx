@@ -3,21 +3,123 @@
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [isMobile, setIsMobile] = useState(false);
+  const [viewport, setViewport] = useState({
+    width: 1440,
+    height: 900,
+  });
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
     };
 
-    handleResize();
+    updateViewport();
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", updateViewport);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", updateViewport);
     };
   }, []);
+
+  const width = viewport.width;
+
+  const isSmallMobile = width <= 480;
+  const isMobile = width <= 767;
+  const isTablet = width >= 768 && width <= 1023;
+  const isSmallDesktop = width >= 1024 && width <= 1279;
+  const isDesktop = width >= 1280;
+
+  /*
+   * ============================================================
+   * RESPONSIVE VALUES
+   * ============================================================
+   */
+
+  const heroMinHeight = isSmallMobile
+    ? "760px"
+    : isMobile
+      ? "800px"
+      : isTablet
+        ? "720px"
+        : "100vh";
+
+  const heroPaddingTop = isSmallMobile
+    ? "125px"
+    : isMobile
+      ? "135px"
+      : isTablet
+        ? "150px"
+        : isSmallDesktop
+          ? "150px"
+          : "175px";
+
+  const heroPaddingBottom = isSmallMobile
+    ? "55px"
+    : isMobile
+      ? "60px"
+      : isTablet
+        ? "65px"
+        : "80px";
+
+  const horizontalPadding = isSmallMobile
+    ? "20px"
+    : isMobile
+      ? "24px"
+      : isTablet
+        ? "42px"
+        : isSmallDesktop
+          ? "48px"
+          : "64px";
+
+  const headingSize = isSmallMobile
+    ? "44px"
+    : isMobile
+      ? "clamp(46px, 10vw, 58px)"
+      : isTablet
+        ? "clamp(52px, 7vw, 66px)"
+        : isSmallDesktop
+          ? "clamp(56px, 5.2vw, 70px)"
+          : "clamp(58px, 5vw, 76px)";
+
+  const descriptionSize = isSmallMobile
+    ? "12.5px"
+    : isMobile
+      ? "13px"
+      : isTablet
+        ? "13px"
+        : "clamp(13px, 0.95vw, 15px)";
+
+  const contentGap = isMobile
+    ? "40px"
+    : isTablet
+      ? "55px"
+      : isSmallDesktop
+        ? "65px"
+        : "90px";
+
+  const backgroundPosition = isSmallMobile
+    ? "65% center"
+    : isMobile
+      ? "63% center"
+      : isTablet
+        ? "60% center"
+        : "center center";
+
+  /*
+   * ============================================================
+   * HERO GRID
+   * ============================================================
+   */
+
+  const gridColumns = isMobile
+    ? "1fr"
+    : isTablet
+      ? "minmax(0, 1fr) minmax(0, 0.9fr)"
+      : "minmax(0, 1.05fr) minmax(0, 0.95fr)";
 
   return (
     <main
@@ -28,22 +130,19 @@ export default function Home() {
         padding: 0,
         overflowX: "hidden",
         fontFamily: "var(--font-poppins), Poppins, sans-serif",
+        boxSizing: "border-box",
       }}
     >
-      {/* =====================================================
+      {/* =========================================================
           HERO SECTION
-
-          IMPORTANT:
-          Hero starts at top: 0.
-          Navbar from layout is positioned over it.
-      ===================================================== */}
+      ========================================================= */}
 
       <section
         id="home"
         style={{
           position: "relative",
           width: "100%",
-          minHeight: isMobile ? "760px" : "100vh",
+          minHeight: heroMinHeight,
           height: isMobile ? "auto" : "100vh",
           overflow: "hidden",
           display: "flex",
@@ -52,13 +151,12 @@ export default function Home() {
           boxSizing: "border-box",
         }}
       >
-        {/* ===================================================
-            HERO BACKGROUND
-
-            Replace this image later.
-        =================================================== */}
+        {/* =======================================================
+            BACKGROUND IMAGE
+        ======================================================= */}
 
         <div
+          aria-hidden="true"
           style={{
             position: "absolute",
             inset: 0,
@@ -66,107 +164,126 @@ export default function Home() {
             height: "100%",
             backgroundImage: "url('/images/hero-bg.jpg')",
             backgroundSize: "cover",
-            backgroundPosition: "center center",
+            backgroundPosition,
             backgroundRepeat: "no-repeat",
             zIndex: 0,
+            transform: "scale(1.001)",
           }}
         />
 
-        {/* ===================================================
-            HERO OVERLAY
-        =================================================== */}
+        {/* =======================================================
+            DARK OVERLAY
+        ======================================================= */}
 
         <div
+          aria-hidden="true"
           style={{
             position: "absolute",
             inset: 0,
             width: "100%",
             height: "100%",
-            background:
-              "linear-gradient(90deg, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.40) 45%, rgba(0, 0, 0, 0.52) 100%)",
+            background: isMobile
+              ? "linear-gradient(90deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.42) 55%, rgba(0,0,0,0.48) 100%)"
+              : "linear-gradient(90deg, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.40) 45%, rgba(0,0,0,0.52) 100%)",
             zIndex: 1,
+            pointerEvents: "none",
           }}
         />
 
-        {/* ===================================================
+        {/* =======================================================
             HERO CONTENT
-        =================================================== */}
+        ======================================================= */}
 
         <div
           style={{
             position: "relative",
             zIndex: 5,
             width: "100%",
-            maxWidth: "1280px",
+            maxWidth: "1360px",
             margin: "0 auto",
-            padding: isMobile ? "150px 24px 70px" : "180px 32px 85px",
+            padding: `${heroPaddingTop} ${horizontalPadding} ${heroPaddingBottom}`,
             boxSizing: "border-box",
           }}
         >
-          {/* =================================================
+          {/* =====================================================
               HERO GRID
-          ================================================= */}
+          ===================================================== */}
 
           <div
             style={{
               width: "100%",
               display: "grid",
-              gridTemplateColumns: isMobile
-                ? "1fr"
-                : "minmax(0, 1.05fr) minmax(0, 0.95fr)",
+              gridTemplateColumns: gridColumns,
               alignItems: "end",
-              columnGap: isMobile ? "0" : "clamp(50px, 7vw, 105px)",
-              rowGap: isMobile ? "45px" : "0",
+              columnGap: isMobile ? "0" : contentGap,
+              rowGap: isSmallMobile
+                ? "36px"
+                : isMobile
+                  ? "42px"
+                  : isTablet
+                    ? "30px"
+                    : "0",
+              boxSizing: "border-box",
             }}
           >
-            {/* ===============================================
+            {/* ===================================================
                 LEFT CONTENT
-            =============================================== */}
+            =================================================== */}
 
             <div
               style={{
                 width: "100%",
-                maxWidth: isMobile ? "600px" : "650px",
+                maxWidth: isMobile ? "620px" : "670px",
+                minWidth: 0,
+                boxSizing: "border-box",
               }}
             >
-              {/* Experience Badge */}
+              {/* =================================================
+                  BADGE
+              ================================================= */}
 
               <div
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: "9px",
-                  padding: "7px 14px 7px 9px",
-                  marginBottom: "18px",
+                  gap: "8px",
+                  maxWidth: "100%",
+                  padding: isSmallMobile
+                    ? "6px 11px 6px 8px"
+                    : "7px 14px 7px 9px",
+                  marginBottom: isSmallMobile ? "16px" : "20px",
                   borderRadius: "30px",
-                  background: "rgba(255, 255, 255, 0.16)",
-                  border: "1px solid rgba(255, 255, 255, 0.22)",
-                  color: "rgba(255, 255, 255, 0.92)",
+                  background: "rgba(255,255,255,0.15)",
+                  border: "1px solid rgba(255,255,255,0.22)",
+                  color: "rgba(255,255,255,0.94)",
                   fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                  fontSize: "11px",
+                  fontSize: isSmallMobile ? "9px" : "11px",
                   fontWeight: 400,
                   lineHeight: 1,
                   letterSpacing: "0.1px",
-                  backdropFilter: "blur(6px)",
-                  WebkitBackdropFilter: "blur(6px)",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
                   boxSizing: "border-box",
+                  whiteSpace: "nowrap",
                 }}
               >
                 <span
                   style={{
-                    width: "9px",
-                    height: "9px",
+                    width: isSmallMobile ? "7px" : "9px",
+                    height: isSmallMobile ? "7px" : "9px",
                     flexShrink: 0,
                     borderRadius: "50%",
                     background: "#AEB8FF",
-                    boxShadow: "0 0 10px rgba(174, 184, 255, 0.65)",
+                    boxShadow: "0 0 10px rgba(174,184,255,0.65)",
                   }}
                 />
 
                 <span>35 Years of Industry Leadership</span>
               </div>
 
-              {/* Hero Heading */}
+              {/* =================================================
+                  HERO HEADING
+              ================================================= */}
 
               <h1
                 style={{
@@ -174,12 +291,17 @@ export default function Home() {
                   padding: 0,
                   color: "#FFFFFF",
                   fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                  fontSize: isMobile
-                    ? "clamp(42px, 11vw, 62px)"
-                    : "clamp(52px, 5.2vw, 74px)",
-                  lineHeight: 1.07,
+                  fontSize: headingSize,
+                  lineHeight: isSmallMobile ? 1.08 : 1.06,
                   fontWeight: 300,
-                  letterSpacing: isMobile ? "-1.5px" : "-2.5px",
+                  letterSpacing: isSmallMobile
+                    ? "-1.8px"
+                    : isMobile
+                      ? "-2px"
+                      : "-2.8px",
+                  maxWidth: "100%",
+                  wordBreak: "normal",
+                  overflowWrap: "normal",
                 }}
               >
                 <span
@@ -224,28 +346,33 @@ export default function Home() {
               </h1>
             </div>
 
-            {/* ===============================================
+            {/* ===================================================
                 RIGHT CONTENT
-            =============================================== */}
+            =================================================== */}
 
             <div
               style={{
                 width: "100%",
-                maxWidth: isMobile ? "600px" : "510px",
-                paddingBottom: isMobile ? "0" : "8px",
+                maxWidth: isMobile ? "620px" : isTablet ? "470px" : "525px",
+                minWidth: 0,
+                paddingBottom: isMobile ? "0" : "6px",
+                boxSizing: "border-box",
               }}
             >
-              {/* Description */}
+              {/* =================================================
+                  DESCRIPTION
+              ================================================= */}
 
               <p
                 style={{
                   margin: "0 0 24px",
                   padding: 0,
-                  color: "rgba(255, 255, 255, 0.92)",
+                  color: "rgba(255,255,255,0.92)",
                   fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                  fontSize: isMobile ? "13px" : "clamp(13px, 1vw, 15px)",
-                  lineHeight: 1.65,
+                  fontSize: descriptionSize,
+                  lineHeight: isMobile ? 1.65 : 1.6,
                   fontWeight: 400,
+                  maxWidth: "100%",
                 }}
               >
                 Gulf International Marine Services Co. (GIMSCO) has established
@@ -254,24 +381,31 @@ export default function Home() {
                 maritime industry, globally.
               </p>
 
-              {/* Buttons */}
+              {/* =================================================
+                  BUTTONS
+              ================================================= */}
 
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
                   flexWrap: "wrap",
-                  gap: "13px",
+                  gap: isSmallMobile ? "10px" : "13px",
+                  width: "100%",
                 }}
               >
-                {/* Request Quote */}
+                {/* REQUEST QUOTE */}
 
                 <a
                   href="/contact"
                   style={{
-                    minWidth: isMobile ? "165px" : "185px",
-                    height: isMobile ? "44px" : "48px",
-                    padding: "0 26px",
+                    minWidth: isSmallMobile
+                      ? "100%"
+                      : isMobile
+                        ? "165px"
+                        : "185px",
+                    height: isSmallMobile ? "46px" : isMobile ? "44px" : "48px",
+                    padding: "0 24px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -280,36 +414,42 @@ export default function Home() {
                     color: "#FFFFFF",
                     textDecoration: "none",
                     fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                    fontSize: isMobile ? "11px" : "12px",
+                    fontSize: isSmallMobile ? "11px" : "12px",
                     fontWeight: 600,
                     letterSpacing: "0.2px",
                     boxSizing: "border-box",
+                    transition: "transform 0.25s ease, background 0.25s ease",
                   }}
                 >
                   REQUEST A QUOTE
                 </a>
 
-                {/* Explore Service */}
+                {/* EXPLORE SERVICE */}
 
                 <a
                   href="/services"
                   style={{
-                    minWidth: isMobile ? "165px" : "175px",
-                    height: isMobile ? "44px" : "48px",
-                    padding: "0 26px",
+                    minWidth: isSmallMobile
+                      ? "100%"
+                      : isMobile
+                        ? "165px"
+                        : "175px",
+                    height: isSmallMobile ? "46px" : isMobile ? "44px" : "48px",
+                    padding: "0 24px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: "30px",
-                    border: "1px solid rgba(255, 255, 255, 0.85)",
-                    background: "rgba(255, 255, 255, 0.04)",
+                    border: "1px solid rgba(255,255,255,0.85)",
+                    background: "rgba(255,255,255,0.04)",
                     color: "#FFFFFF",
                     textDecoration: "none",
                     fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                    fontSize: isMobile ? "11px" : "12px",
+                    fontSize: isSmallMobile ? "11px" : "12px",
                     fontWeight: 500,
                     letterSpacing: "0.2px",
                     boxSizing: "border-box",
+                    transition: "background 0.25s ease, transform 0.25s ease",
                   }}
                 >
                   EXPLORE SERVICE
@@ -319,19 +459,20 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ===================================================
+        {/* =======================================================
             BOTTOM GRADIENT
-        =================================================== */}
+        ======================================================= */}
 
         <div
+          aria-hidden="true"
           style={{
             position: "absolute",
             left: 0,
             right: 0,
             bottom: 0,
-            height: isMobile ? "120px" : "170px",
+            height: isMobile ? "140px" : "180px",
             background:
-              "linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.32))",
+              "linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.34))",
             zIndex: 3,
             pointerEvents: "none",
           }}

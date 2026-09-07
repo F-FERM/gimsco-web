@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const milestones = [
   {
@@ -26,12 +26,72 @@ const milestones = [
 ];
 
 export default function CompanyHistory() {
+  const [viewport, setViewport] = useState({
+    width: 1440,
+    height: 900,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  const width = viewport.width;
+
+  const isSmallMobile = width <= 480;
+  const isMobile = width <= 767;
+  const isTablet = width >= 768 && width <= 1023;
+
+  const sectionPadding = isSmallMobile
+    ? "50px 16px"
+    : isMobile
+      ? "clamp(70px, 8vw, 100px) 20px"
+      : "clamp(70px, 8vw, 125px) 24px";
+
+  const headingSize = isSmallMobile
+    ? "clamp(34px, 10vw, 44px)"
+    : isMobile
+      ? "clamp(44px, 5.2vw, 52px)"
+      : "clamp(44px, 5.2vw, 68px)";
+
+  const yearSize = isSmallMobile
+    ? "clamp(16px, 1.8vw, 20px)"
+    : isMobile
+      ? "clamp(20px, 1.8vw, 22px)"
+      : "clamp(20px, 1.8vw, 25px)";
+
+  const descSize = isSmallMobile
+    ? "clamp(10px, 0.95vw, 11px)"
+    : "clamp(11px, 0.95vw, 13px)";
+
+  const gridColumns = isMobile
+    ? "repeat(1, minmax(0, 1fr))"
+    : isTablet
+      ? "repeat(2, minmax(0, 1fr))"
+      : "repeat(4, minmax(0, 1fr))";
+
+  const dotSize = isSmallMobile ? "14px" : "18px";
+
+  const timelineMargin = isSmallMobile ? "30px" : isMobile ? "40px" : "48px";
+
   return (
     <section
       style={{
         width: "100%",
         background: "#FFFFFF",
-        padding: "clamp(70px, 8vw, 125px) 24px",
+        padding: sectionPadding,
         boxSizing: "border-box",
         overflow: "hidden",
       }}
@@ -50,9 +110,9 @@ export default function CompanyHistory() {
             display: "inline-flex",
             alignItems: "center",
             gap: "6px",
-            height: "25px",
-            padding: "0 11px 0 6px",
-            marginBottom: "14px",
+            height: isSmallMobile ? "22px" : "25px",
+            padding: isSmallMobile ? "0 8px 0 5px" : "0 11px 0 6px",
+            marginBottom: isSmallMobile ? "10px" : "14px",
             borderRadius: "20px",
             background: "#E8E8EC",
             border: "1px solid #D2D2D8",
@@ -73,7 +133,7 @@ export default function CompanyHistory() {
           <span
             style={{
               fontFamily: "var(--font-poppins), Poppins, sans-serif",
-              fontSize: "10px",
+              fontSize: isSmallMobile ? "8px" : "10px",
               fontWeight: 400,
               lineHeight: 1,
               color: "#747474",
@@ -90,10 +150,14 @@ export default function CompanyHistory() {
             margin: 0,
             maxWidth: "470px",
             fontFamily: "var(--font-poppins), Poppins, sans-serif",
-            fontSize: "clamp(44px, 5.2vw, 68px)",
+            fontSize: headingSize,
             fontWeight: 300,
             lineHeight: 1.08,
-            letterSpacing: "-2.5px",
+            letterSpacing: isSmallMobile
+              ? "-1.5px"
+              : isMobile
+                ? "-2px"
+                : "-2.5px",
             color: "#080808",
           }}
         >
@@ -114,22 +178,24 @@ export default function CompanyHistory() {
           style={{
             position: "relative",
             width: "100%",
-            marginTop: "48px",
+            marginTop: timelineMargin,
             boxSizing: "border-box",
           }}
         >
           {/* Horizontal Line */}
-          <div
-            style={{
-              position: "absolute",
-              left: "9px",
-              right: "9px",
-              top: "9px",
-              height: "3px",
-              background: "#34439D",
-              zIndex: 0,
-            }}
-          />
+          {!isMobile && (
+            <div
+              style={{
+                position: "absolute",
+                left: isSmallMobile ? "6px" : "9px",
+                right: isSmallMobile ? "6px" : "9px",
+                top: isSmallMobile ? "6px" : "9px",
+                height: isSmallMobile ? "2px" : "3px",
+                background: "#34439D",
+                zIndex: 0,
+              }}
+            />
+          )}
 
           {/* Milestones */}
           <div
@@ -138,8 +204,13 @@ export default function CompanyHistory() {
               zIndex: 1,
               width: "100%",
               display: "grid",
-              gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-              columnGap: "clamp(25px, 4vw, 55px)",
+              gridTemplateColumns: gridColumns,
+              columnGap: isSmallMobile
+                ? "16px"
+                : isMobile
+                  ? "clamp(16px, 4vw, 25px)"
+                  : "clamp(25px, 4vw, 55px)",
+              rowGap: isMobile ? "28px" : "0",
             }}
           >
             {milestones.map((milestone) => (
@@ -153,11 +224,11 @@ export default function CompanyHistory() {
                 {/* Timeline Dot */}
                 <div
                   style={{
-                    width: "18px",
-                    height: "18px",
+                    width: dotSize,
+                    height: dotSize,
                     borderRadius: "50%",
                     background: "#35459F",
-                    marginBottom: "16px",
+                    marginBottom: isSmallMobile ? "12px" : "16px",
                     boxSizing: "border-box",
                   }}
                 />
@@ -167,7 +238,7 @@ export default function CompanyHistory() {
                   style={{
                     margin: 0,
                     fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                    fontSize: "clamp(20px, 1.8vw, 25px)",
+                    fontSize: yearSize,
                     fontWeight: 500,
                     lineHeight: 1.2,
                     letterSpacing: "-0.5px",
@@ -180,12 +251,12 @@ export default function CompanyHistory() {
                 {/* Description */}
                 <p
                   style={{
-                    margin: "7px 0 0",
+                    margin: isSmallMobile ? "4px 0 0" : "7px 0 0",
                     maxWidth: "245px",
                     fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                    fontSize: "clamp(11px, 0.95vw, 13px)",
+                    fontSize: descSize,
                     fontWeight: 400,
-                    lineHeight: 1.35,
+                    lineHeight: isSmallMobile ? 1.3 : 1.35,
                     color: "#777777",
                   }}
                 >
@@ -196,26 +267,6 @@ export default function CompanyHistory() {
           </div>
         </div>
       </div>
-
-      {/* Responsive styles */}
-      <style jsx>{`
-        @media (max-width: 768px) {
-          section {
-            padding-left: 20px !important;
-            padding-right: 20px !important;
-          }
-
-          .timeline {
-            margin-top: 40px;
-          }
-        }
-
-        @media (max-width: 640px) {
-          .timeline {
-            position: relative;
-          }
-        }
-      `}</style>
     </section>
   );
 }

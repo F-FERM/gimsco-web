@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const products = [
   {
@@ -43,17 +43,103 @@ const products = [
 ];
 
 export default function ProductEcosystem() {
+  const [viewport, setViewport] = useState({
+    width: 1440,
+    height: 900,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  const width = viewport.width;
+
+  const isSmallMobile = width <= 480;
+  const isMobile = width <= 767;
+  const isTablet = width >= 768 && width <= 1023;
+
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const sectionPadding = isSmallMobile
+    ? "50px 12px"
+    : isMobile
+      ? "clamp(80px, 8vw, 100px) 16px"
+      : "clamp(80px, 8vw, 125px) 24px";
+
+  const headingSize = isSmallMobile
+    ? "clamp(30px, 10vw, 38px)"
+    : isMobile
+      ? "clamp(38px, 4.25vw, 48px)"
+      : "clamp(38px, 4.25vw, 66px)";
+
+  const gridColumns = isSmallMobile
+    ? "repeat(2, minmax(0, 1fr))"
+    : isMobile
+      ? "repeat(2, minmax(0, 1fr))"
+      : isTablet
+        ? "repeat(3, minmax(0, 1fr))"
+        : "repeat(3, minmax(0, 1fr))";
+
+  const cardHeight = isSmallMobile
+    ? "clamp(140px, 15vw, 160px)"
+    : isMobile
+      ? "clamp(160px, 15vw, 190px)"
+      : "clamp(190px, 15vw, 240px)";
+
+  const iconSize = isSmallMobile
+    ? "clamp(30px, 3.6vw, 38px)"
+    : isMobile
+      ? "clamp(38px, 3.6vw, 45px)"
+      : "clamp(45px, 3.6vw, 58px)";
+
+  const titleSize = isSmallMobile
+    ? "clamp(13px, 1.55vw, 16px)"
+    : isMobile
+      ? "clamp(15px, 1.55vw, 18px)"
+      : "clamp(18px, 1.55vw, 25px)";
+
+  const gridGap = isSmallMobile ? "8px" : isMobile ? "10px" : "14px";
+
+  const iconTop = isSmallMobile
+    ? "clamp(16px, 2.2vw, 22px)"
+    : isMobile
+      ? "clamp(22px, 2.2vw, 30px)"
+      : "clamp(27px, 2.2vw, 40px)";
+
+  const iconLeft = isSmallMobile
+    ? "clamp(16px, 2.2vw, 22px)"
+    : isMobile
+      ? "clamp(22px, 2.2vw, 30px)"
+      : "clamp(27px, 2.2vw, 40px)";
+
+  const titleBottom = isSmallMobile
+    ? "clamp(16px, 2.2vw, 22px)"
+    : isMobile
+      ? "clamp(22px, 2.2vw, 28px)"
+      : "clamp(27px, 2.2vw, 36px)";
 
   return (
     <section
       style={{
         width: "100%",
         background: "#FFFFFF",
-        paddingTop: "clamp(80px, 8vw, 125px)",
-        paddingBottom: "clamp(90px, 9vw, 140px)",
-        paddingLeft: "24px",
-        paddingRight: "24px",
+        paddingTop: sectionPadding,
+        paddingBottom: sectionPadding,
+        paddingLeft: isSmallMobile ? "12px" : isMobile ? "16px" : "24px",
+        paddingRight: isSmallMobile ? "12px" : isMobile ? "16px" : "24px",
         boxSizing: "border-box",
         overflow: "hidden",
       }}
@@ -81,9 +167,9 @@ export default function ProductEcosystem() {
             display: "inline-flex",
             alignItems: "center",
             gap: "6px",
-            height: "23px",
-            padding: "0 10px 0 6px",
-            marginBottom: "20px",
+            height: isSmallMobile ? "20px" : "23px",
+            padding: isSmallMobile ? "0 8px 0 5px" : "0 10px 0 6px",
+            marginBottom: isSmallMobile ? "14px" : "20px",
             borderRadius: "20px",
             background: "#F0F1F5",
             border: "1px solid #D9DAE2",
@@ -105,7 +191,7 @@ export default function ProductEcosystem() {
             style={{
               color: "#777777",
               fontFamily: "var(--font-poppins), Poppins, sans-serif",
-              fontSize: "9px",
+              fontSize: isSmallMobile ? "7px" : "9px",
               fontWeight: 400,
               lineHeight: 1,
               whiteSpace: "nowrap",
@@ -123,10 +209,10 @@ export default function ProductEcosystem() {
             padding: 0,
             color: "#090909",
             fontFamily: "var(--font-poppins), Poppins, sans-serif",
-            fontSize: "clamp(38px, 4.25vw, 66px)",
+            fontSize: headingSize,
             fontWeight: 300,
-            lineHeight: 1.08,
-            letterSpacing: "-2.8px",
+            lineHeight: isSmallMobile ? 1.1 : 1.08,
+            letterSpacing: isSmallMobile ? "-1.5px" : "-2.8px",
           }}
         >
           <span
@@ -146,7 +232,7 @@ export default function ProductEcosystem() {
           >
             250+
           </span>
-          <br />
+          {!isSmallMobile && <br />}
           Leading Brands.
         </h2>
       </div>
@@ -159,10 +245,14 @@ export default function ProductEcosystem() {
         style={{
           width: "100%",
           maxWidth: "1040px",
-          margin: "clamp(42px, 4.5vw, 60px) auto 0",
+          margin: isSmallMobile
+            ? "clamp(24px, 4.5vw, 32px) auto 0"
+            : isMobile
+              ? "clamp(32px, 4.5vw, 42px) auto 0"
+              : "clamp(42px, 4.5vw, 60px) auto 0",
           display: "grid",
-          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-          gap: "14px",
+          gridTemplateColumns: gridColumns,
+          gap: gridGap,
           boxSizing: "border-box",
         }}
       >
@@ -177,8 +267,8 @@ export default function ProductEcosystem() {
               style={{
                 position: "relative",
                 width: "100%",
-                height: "clamp(190px, 15vw, 240px)",
-                borderRadius: "15px",
+                height: cardHeight,
+                borderRadius: isSmallMobile ? "12px" : "15px",
 
                 /* Normal / Hover border */
                 border: isHovered ? "1px solid #D7D7D7" : "1px solid #E3E3E3",
@@ -214,10 +304,10 @@ export default function ProductEcosystem() {
               <div
                 style={{
                   position: "absolute",
-                  top: "clamp(27px, 2.2vw, 40px)",
-                  left: "clamp(27px, 2.2vw, 40px)",
-                  width: "clamp(45px, 3.6vw, 58px)",
-                  height: "clamp(45px, 3.6vw, 58px)",
+                  top: iconTop,
+                  left: iconLeft,
+                  width: iconSize,
+                  height: iconSize,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -253,15 +343,15 @@ export default function ProductEcosystem() {
               <div
                 style={{
                   position: "absolute",
-                  left: "clamp(27px, 2.2vw, 40px)",
+                  left: iconLeft,
                   right: "20px",
-                  bottom: "clamp(27px, 2.2vw, 36px)",
+                  bottom: titleBottom,
 
                   color: "#111111",
 
                   fontFamily: "var(--font-poppins), Poppins, sans-serif",
 
-                  fontSize: "clamp(18px, 1.55vw, 25px)",
+                  fontSize: titleSize,
 
                   fontWeight: 500,
 

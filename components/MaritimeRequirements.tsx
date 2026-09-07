@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 const solutions = [
@@ -12,17 +12,93 @@ const solutions = [
 ];
 
 export default function MaritimeRequirements() {
+  const [viewport, setViewport] = useState({
+    width: 1440,
+    height: 900,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  const width = viewport.width;
+
+  const isSmallMobile = width <= 480;
+  const isMobile = width <= 767;
+  const isTablet = width >= 768 && width <= 1023;
+
+  const sectionPadding = isSmallMobile
+    ? "40px 16px"
+    : isMobile
+      ? "55px 20px"
+      : isTablet
+        ? "70px 30px"
+        : "90px 5vw";
+
+  const headingSize = isSmallMobile
+    ? "clamp(30px, 10vw, 38px)"
+    : isMobile
+      ? "clamp(34px, 10vw, 46px)"
+      : isTablet
+        ? "clamp(40px, 7vw, 52px)"
+        : "clamp(42px, 4.5vw, 68px)";
+
+  const gridColumns = isMobile ? "1fr" : "minmax(0, 0.9fr) minmax(0, 1.1fr)";
+
+  const gridGap = isSmallMobile
+    ? "24px"
+    : isMobile
+      ? "32px"
+      : isTablet
+        ? "45px"
+        : "clamp(30px, 4vw, 70px)";
+
+  const imageAspectRatio = isSmallMobile
+    ? "1 / 0.9"
+    : isMobile
+      ? "1.1 / 1"
+      : "1 / 1";
+
+  const imageBorderRadius = isSmallMobile ? "14px" : isMobile ? "18px" : "22px";
+
+  const tagSize = isSmallMobile ? "9px" : isMobile ? "11px" : "12px";
+
+  const tagPadding = isSmallMobile
+    ? "5px 10px"
+    : isMobile
+      ? "7px 13px"
+      : "7px 15px";
+
   return (
-    <section className="requirements-section">
-      <div className="requirements-container">
+    <section
+      className="requirements-section"
+      style={{ padding: sectionPadding }}
+    >
+      <div className="requirements-container" style={{ gap: gridGap }}>
         {/* Left Image */}
-        <div className="requirements-image-wrapper">
+        <div
+          className="requirements-image-wrapper"
+          style={{ aspectRatio: imageAspectRatio }}
+        >
           <Image
             src="/images/maritime-requirements.jpg"
             alt="Maritime cargo ship"
             fill
             priority={false}
-            sizes="(max-width: 900px) 100vw, 42vw"
+            sizes="(max-width: 480px) 100vw, (max-width: 767px) 100vw, (max-width: 1023px) 100vw, 42vw"
             className="requirements-image"
           />
         </div>
@@ -30,13 +106,19 @@ export default function MaritimeRequirements() {
         {/* Right Content */}
         <div className="requirements-content">
           {/* Small Label */}
-          <div className="requirements-label">
+          <div
+            className="requirements-label"
+            style={{ fontSize: isSmallMobile ? "8px" : "11px" }}
+          >
             <span className="requirements-label-dot" />
             <span>What Makes Us Unique</span>
           </div>
 
           {/* Heading */}
-          <h2 className="requirements-heading">
+          <h2
+            className="requirements-heading"
+            style={{ fontSize: headingSize }}
+          >
             Built Around Your
             <br />
             Maritime
@@ -46,23 +128,54 @@ export default function MaritimeRequirements() {
 
           {/* Description */}
           <div className="requirements-description">
-            <p>
+            <p
+              style={{
+                fontSize: isSmallMobile
+                  ? "10px"
+                  : isMobile
+                    ? "12px"
+                    : "clamp(12px, 0.9vw, 15px)",
+              }}
+            >
               At GIMSCO, we don&apos;t just serve clients — we build lasting
               relationships. Every vessel and operation is unique, which is why
               we offer customized solutions designed for efficiency,
               cost-effectiveness and peace of mind.
             </p>
 
-            <p>
+            <p
+              style={{
+                fontSize: isSmallMobile
+                  ? "10px"
+                  : isMobile
+                    ? "12px"
+                    : "clamp(12px, 0.9vw, 15px)",
+              }}
+            >
               Our commitment to quality and service means that once you&apos;ve
               worked with GIMSCO, you&apos;ll never need to look elsewhere.
             </p>
           </div>
 
           {/* Solution Pills */}
-          <div className="requirements-tags">
+          <div
+            className="requirements-tags"
+            style={{ gap: isSmallMobile ? "6px" : "8px" }}
+          >
             {solutions.map((solution) => (
-              <div key={solution} className="requirements-tag">
+              <div
+                key={solution}
+                className="requirements-tag"
+                style={{
+                  fontSize: tagSize,
+                  padding: tagPadding,
+                  minHeight: isSmallMobile
+                    ? "28px"
+                    : isMobile
+                      ? "35px"
+                      : "37px",
+                }}
+              >
                 {solution}
               </div>
             ))}
@@ -74,7 +187,6 @@ export default function MaritimeRequirements() {
         .requirements-section {
           width: 100%;
           background: #ffffff;
-          padding: 90px 5vw;
           box-sizing: border-box;
         }
 
@@ -84,9 +196,8 @@ export default function MaritimeRequirements() {
           margin: 0 auto;
 
           display: grid;
-          grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+          grid-template-columns: ${gridColumns};
           align-items: center;
-          gap: clamp(30px, 4vw, 70px);
         }
 
         /* =========================
@@ -96,9 +207,8 @@ export default function MaritimeRequirements() {
         .requirements-image-wrapper {
           position: relative;
           width: 100%;
-          aspect-ratio: 1 / 1;
           overflow: hidden;
-          border-radius: 22px;
+          border-radius: ${imageBorderRadius};
           background: #e9edf2;
         }
 
@@ -140,7 +250,6 @@ export default function MaritimeRequirements() {
 
           font-family: var(--font-poppins), Poppins, sans-serif;
 
-          font-size: 11px;
           font-weight: 400;
           line-height: 1;
         }
@@ -161,14 +270,21 @@ export default function MaritimeRequirements() {
         ========================= */
 
         .requirements-heading {
-          margin: 18px 0 25px;
+          margin: ${isSmallMobile
+            ? "12px 0 16px"
+            : isMobile
+              ? "18px 0 20px"
+              : "18px 0 25px"};
 
           font-family: var(--font-poppins), Poppins, sans-serif;
 
-          font-size: clamp(42px, 4.5vw, 68px);
           font-weight: 300;
-          line-height: 1.06;
-          letter-spacing: -2.5px;
+          line-height: ${isSmallMobile ? 1.08 : isMobile ? 1.08 : 1.06};
+          letter-spacing: ${isSmallMobile
+            ? "-1.2px"
+            : isMobile
+              ? "-1.5px"
+              : "-2.5px"};
 
           color: #050505;
         }
@@ -191,11 +307,10 @@ export default function MaritimeRequirements() {
         }
 
         .requirements-description p {
-          margin: 0 0 15px;
+          margin: 0 0 ${isSmallMobile ? "10px" : "15px"};
 
-          font-size: clamp(12px, 0.9vw, 15px);
           font-weight: 400;
-          line-height: 1.45;
+          line-height: ${isSmallMobile ? 1.4 : isMobile ? 1.45 : 1.45};
         }
 
         .requirements-description p:last-child {
@@ -209,9 +324,8 @@ export default function MaritimeRequirements() {
         .requirements-tags {
           display: flex;
           flex-wrap: wrap;
-          gap: 10px;
 
-          margin-top: 18px;
+          margin-top: ${isSmallMobile ? "12px" : isMobile ? "16px" : "18px"};
         }
 
         .requirements-tag {
@@ -219,17 +333,15 @@ export default function MaritimeRequirements() {
           align-items: center;
           justify-content: center;
 
-          min-height: 37px;
-          padding: 7px 15px;
-
-          border: 1.5px solid #303eae;
+          border: ${isSmallMobile
+            ? "1px solid #303eae"
+            : "1.5px solid #303eae"};
           border-radius: 999px;
 
           box-sizing: border-box;
 
           font-family: var(--font-poppins), Poppins, sans-serif;
 
-          font-size: 12px;
           font-weight: 500;
           line-height: 1;
 
@@ -255,28 +367,18 @@ export default function MaritimeRequirements() {
         ========================= */
 
         @media (max-width: 900px) {
-          .requirements-section {
-            padding: 70px 30px;
-          }
-
           .requirements-container {
             grid-template-columns: 1fr;
-            gap: 45px;
           }
 
           .requirements-image-wrapper {
             max-width: 620px;
             margin: 0 auto;
-            aspect-ratio: 1.1 / 1;
           }
 
           .requirements-content {
             max-width: 700px;
             margin: 0 auto;
-          }
-
-          .requirements-heading {
-            font-size: clamp(40px, 7vw, 58px);
           }
         }
 
@@ -285,46 +387,8 @@ export default function MaritimeRequirements() {
         ========================= */
 
         @media (max-width: 600px) {
-          .requirements-section {
-            padding: 55px 20px;
-          }
-
-          .requirements-container {
-            gap: 32px;
-          }
-
           .requirements-image-wrapper {
-            aspect-ratio: 1 / 1;
-            border-radius: 18px;
-          }
-
-          .requirements-label {
-            font-size: 10px;
-          }
-
-          .requirements-heading {
-            margin-top: 15px;
-            margin-bottom: 20px;
-
-            font-size: clamp(34px, 10vw, 46px);
-            line-height: 1.08;
-            letter-spacing: -1.5px;
-          }
-
-          .requirements-description p {
-            font-size: 12px;
-            line-height: 1.5;
-          }
-
-          .requirements-tags {
-            gap: 8px;
-            margin-top: 16px;
-          }
-
-          .requirements-tag {
-            min-height: 35px;
-            padding: 7px 13px;
-            font-size: 11px;
+            max-width: 100%;
           }
         }
       `}</style>

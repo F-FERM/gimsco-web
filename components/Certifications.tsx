@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const certifications = [
   {
@@ -43,7 +43,75 @@ const certifications = [
 ];
 
 export default function Certifications() {
+  const [viewport, setViewport] = useState({
+    width: 1440,
+    height: 900,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  const width = viewport.width;
+
+  const isSmallMobile = width <= 480;
+  const isMobile = width <= 767;
+  const isTablet = width >= 768 && width <= 1023;
+  const isSmallDesktop = width >= 1024 && width <= 1279;
+  const isDesktop = width >= 1280;
+
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const sectionPadding = isSmallMobile
+    ? "50px 16px"
+    : isMobile
+      ? "clamp(70px, 7vw, 110px) 20px"
+      : "clamp(70px, 7vw, 110px) 24px";
+
+  const headingSize = isSmallMobile
+    ? "clamp(32px, 10vw, 42px)"
+    : isMobile
+      ? "clamp(42px, 5vw, 52px)"
+      : "clamp(42px, 5vw, 70px)";
+
+  const gridColumns = isMobile
+    ? "repeat(1, minmax(0, 1fr))"
+    : isTablet
+      ? "repeat(2, minmax(0, 1fr))"
+      : "repeat(3, minmax(0, 1fr))";
+
+  const cellMinHeight = isSmallMobile ? "200px" : isMobile ? "220px" : "265px";
+
+  const cellPadding = isSmallMobile
+    ? "clamp(18px, 2.2vw, 22px) clamp(14px, 2vw, 18px)"
+    : isMobile
+      ? "clamp(25px, 2.2vw, 30px) clamp(18px, 2vw, 22px)"
+      : "clamp(25px, 2.2vw, 33px) clamp(18px, 2vw, 24px)";
+
+  const titleSize = isSmallMobile
+    ? "clamp(15px, 1.5vw, 18px)"
+    : isMobile
+      ? "clamp(18px, 1.5vw, 20px)"
+      : "clamp(18px, 1.5vw, 23px)";
+
+  const descSize = isSmallMobile
+    ? "clamp(10px, 0.9vw, 11px)"
+    : "clamp(11px, 0.9vw, 13px)";
+
+  const starSize = isSmallMobile ? "30px" : "42px";
 
   return (
     <section
@@ -51,7 +119,7 @@ export default function Certifications() {
       style={{
         width: "100%",
         background: "#F1F1FA",
-        padding: "clamp(70px, 7vw, 110px) 24px",
+        padding: sectionPadding,
         boxSizing: "border-box",
         overflow: "hidden",
       }}
@@ -71,9 +139,9 @@ export default function Certifications() {
             display: "inline-flex",
             alignItems: "center",
             gap: "6px",
-            height: "25px",
-            padding: "0 11px 0 6px",
-            marginBottom: "14px",
+            height: isSmallMobile ? "22px" : "25px",
+            padding: isSmallMobile ? "0 8px 0 5px" : "0 11px 0 6px",
+            marginBottom: isSmallMobile ? "10px" : "14px",
             borderRadius: "20px",
             background: "#E5E5EB",
             border: "1px solid #D0D0D8",
@@ -94,7 +162,7 @@ export default function Certifications() {
           <span
             style={{
               fontFamily: "var(--font-poppins), Poppins, sans-serif",
-              fontSize: "10px",
+              fontSize: isSmallMobile ? "8px" : "10px",
               fontWeight: 400,
               color: "#747474",
               lineHeight: 1,
@@ -112,10 +180,14 @@ export default function Certifications() {
             margin: 0,
             maxWidth: "850px",
             fontFamily: "var(--font-poppins), Poppins, sans-serif",
-            fontSize: "clamp(42px, 5vw, 70px)",
+            fontSize: headingSize,
             fontWeight: 300,
             lineHeight: 1.12,
-            letterSpacing: "-2.5px",
+            letterSpacing: isSmallMobile
+              ? "-1.5px"
+              : isMobile
+                ? "-2px"
+                : "-2.5px",
             color: "#080808",
           }}
         >
@@ -138,12 +210,16 @@ export default function Certifications() {
 
         <p
           style={{
-            margin: "20px 0 42px",
+            margin: isSmallMobile ? "14px 0 28px" : "20px 0 42px",
             maxWidth: "760px",
             fontFamily: "var(--font-poppins), Poppins, sans-serif",
-            fontSize: "clamp(12px, 1vw, 15px)",
+            fontSize: isSmallMobile
+              ? "11px"
+              : isMobile
+                ? "12px"
+                : "clamp(12px, 1vw, 15px)",
             fontWeight: 400,
-            lineHeight: 1.45,
+            lineHeight: isSmallMobile ? 1.4 : 1.45,
             color: "#777777",
           }}
         >
@@ -160,9 +236,9 @@ export default function Certifications() {
           style={{
             width: "100%",
             display: "grid",
-            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gridTemplateColumns: gridColumns,
             border: "1px solid #9C9C9C",
-            borderRadius: "20px",
+            borderRadius: isSmallMobile ? "12px" : "20px",
             overflow: "hidden",
             background: "#FFFFFF",
             boxSizing: "border-box",
@@ -170,6 +246,7 @@ export default function Certifications() {
         >
           {certifications.map((certification, index) => {
             const isHovered = hoveredIndex === index;
+            const cols = isMobile ? 1 : isTablet ? 2 : 3;
 
             return (
               <div
@@ -178,11 +255,15 @@ export default function Certifications() {
                 onMouseLeave={() => setHoveredIndex(null)}
                 style={{
                   position: "relative",
-                  minHeight: "265px",
-                  padding: "clamp(25px, 2.2vw, 33px) clamp(18px, 2vw, 24px)",
+                  minHeight: cellMinHeight,
+                  padding: cellPadding,
                   boxSizing: "border-box",
-                  borderRight: index % 3 !== 2 ? "1px solid #A5A5A5" : "none",
-                  borderBottom: index < 3 ? "1px solid #A5A5A5" : "none",
+                  borderRight:
+                    index % cols !== cols - 1 ? "1px solid #A5A5A5" : "none",
+                  borderBottom:
+                    index < certifications.length - cols
+                      ? "1px solid #A5A5A5"
+                      : "none",
                   overflow: "hidden",
                   background: isHovered ? "#BDBDFF4D" : "#FFFFFF",
                   transition: "background 0.35s ease, box-shadow 0.35s ease",
@@ -207,7 +288,7 @@ export default function Certifications() {
                       src={certification.image}
                       alt=""
                       fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
+                      sizes="(max-width: 480px) 100vw, (max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
                       style={{
                         objectFit: "cover",
                         opacity: 0.22,
@@ -245,15 +326,17 @@ export default function Certifications() {
 
                   <div
                     style={{
-                      width: "42px",
-                      height: "42px",
-                      minWidth: "42px",
+                      width: starSize,
+                      height: starSize,
+                      minWidth: starSize,
                       borderRadius: "50%",
-                      border: "2px solid #5360BC",
+                      border: isSmallMobile
+                        ? "1.5px solid #5360BC"
+                        : "2px solid #5360BC",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      marginBottom: "15px",
+                      marginBottom: isSmallMobile ? "10px" : "15px",
                       boxSizing: "border-box",
                       background: isHovered
                         ? "rgba(255,255,255,0.12)"
@@ -262,8 +345,8 @@ export default function Certifications() {
                     }}
                   >
                     <svg
-                      width="20"
-                      height="20"
+                      width={isSmallMobile ? "16" : "20"}
+                      height={isSmallMobile ? "16" : "20"}
                       viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -285,7 +368,7 @@ export default function Certifications() {
                       margin: 0,
                       maxWidth: "100%",
                       fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                      fontSize: "clamp(18px, 1.5vw, 23px)",
+                      fontSize: titleSize,
                       fontWeight: 500,
                       lineHeight: 1.25,
                       letterSpacing: "-0.4px",
@@ -300,12 +383,12 @@ export default function Certifications() {
 
                   <p
                     style={{
-                      margin: "7px 0 0",
+                      margin: isSmallMobile ? "5px 0 0" : "7px 0 0",
                       maxWidth: "100%",
                       fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                      fontSize: "clamp(11px, 0.9vw, 13px)",
+                      fontSize: descSize,
                       fontWeight: 400,
-                      lineHeight: 1.3,
+                      lineHeight: isSmallMobile ? 1.3 : 1.3,
                       color: isHovered ? "#666666" : "#777777",
                       transition: "color 0.3s ease",
                     }}

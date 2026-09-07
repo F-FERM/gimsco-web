@@ -1,8 +1,36 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export default function ContactSection() {
+  const [viewport, setViewport] = useState({
+    width: 1440,
+    height: 900,
+  });
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateViewport();
+
+    window.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  const width = viewport.width;
+
+  const isSmallMobile = width <= 480;
+  const isMobile = width <= 767;
+  const isTablet = width >= 768 && width <= 1023;
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -10,12 +38,26 @@ export default function ContactSection() {
     console.log("Contact form submitted");
   };
 
+  const containerPadding = isSmallMobile
+    ? "40px 16px 50px"
+    : isMobile
+      ? "55px 20px 60px"
+      : isTablet
+        ? "65px 32px 70px"
+        : "75px 32px";
+
+  const headingSize = isSmallMobile
+    ? "clamp(36px, 12vw, 46px)"
+    : isMobile
+      ? "clamp(40px, 12vw, 55px)"
+      : "clamp(48px, 5.2vw, 72px)";
+
   return (
     <section id="contact" className="contact-section">
       {/* Background overlay */}
       <div className="contact-overlay" />
 
-      <div className="contact-container">
+      <div className="contact-container" style={{ padding: containerPadding }}>
         {/* =========================
             LEFT CONTENT
         ========================= */}
@@ -27,7 +69,7 @@ export default function ContactSection() {
           </div>
 
           {/* Heading */}
-          <h2 className="contact-heading">
+          <h2 className="contact-heading" style={{ fontSize: headingSize }}>
             Tell us what your
             <br />
             <span>vessel needs</span>
@@ -209,14 +251,13 @@ export default function ContactSection() {
           max-width: 1280px;
 
           margin: 0 auto;
-          padding: 75px 32px;
 
           box-sizing: border-box;
 
           display: grid;
           grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
 
-          gap: clamp(50px, 7vw, 110px);
+          gap: clamp(40px, 7vw, 110px);
 
           align-items: center;
         }
@@ -245,7 +286,7 @@ export default function ContactSection() {
 
           color: rgba(255, 255, 255, 0.88);
 
-          font-size: 11px;
+          font-size: ${isSmallMobile ? "9px" : "11px"};
           font-weight: 400;
 
           line-height: 1;
@@ -265,13 +306,12 @@ export default function ContactSection() {
         }
 
         .contact-heading {
-          margin: 18px 0 22px;
+          margin: ${isSmallMobile ? "12px 0 16px" : "18px 0 22px"};
 
-          font-size: clamp(48px, 5.2vw, 72px);
           font-weight: 300;
 
           line-height: 1.05;
-          letter-spacing: -2.5px;
+          letter-spacing: ${isSmallMobile ? "-1.5px" : "-2.5px"};
 
           color: #ffffff;
         }
@@ -286,10 +326,14 @@ export default function ContactSection() {
 
           margin: 0;
 
-          font-size: clamp(12px, 1vw, 14px);
+          font-size: ${isSmallMobile
+            ? "11px"
+            : isMobile
+              ? "12px"
+              : "clamp(12px, 1vw, 14px)"};
           font-weight: 400;
 
-          line-height: 1.45;
+          line-height: ${isSmallMobile ? 1.4 : 1.45};
 
           color: rgba(255, 255, 255, 0.82);
         }
@@ -298,15 +342,15 @@ export default function ContactSection() {
           width: 100%;
           height: 1px;
 
-          margin: 18px 0;
+          margin: ${isSmallMobile ? "14px 0" : "18px 0"};
 
           background: rgba(255, 255, 255, 0.22);
         }
 
         .contact-detail h3 {
-          margin: 0 0 7px;
+          margin: 0 0 ${isSmallMobile ? "4px" : "7px"};
 
-          font-size: 16px;
+          font-size: ${isSmallMobile ? "13px" : "16px"};
           font-weight: 500;
 
           line-height: 1.2;
@@ -317,10 +361,10 @@ export default function ContactSection() {
         .contact-detail p {
           margin: 0;
 
-          font-size: 13px;
+          font-size: ${isSmallMobile ? "11px" : "13px"};
           font-weight: 400;
 
-          line-height: 1.35;
+          line-height: ${isSmallMobile ? 1.3 : 1.35};
 
           color: rgba(255, 255, 255, 0.82);
         }
@@ -335,7 +379,7 @@ export default function ContactSection() {
           display: flex;
           flex-direction: column;
 
-          gap: 17px;
+          gap: ${isSmallMobile ? "14px" : "17px"};
         }
 
         .form-row {
@@ -344,7 +388,7 @@ export default function ContactSection() {
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
 
-          gap: 10px;
+          gap: ${isSmallMobile ? "8px" : "10px"};
         }
 
         .form-field {
@@ -353,13 +397,13 @@ export default function ContactSection() {
           display: flex;
           flex-direction: column;
 
-          gap: 7px;
+          gap: ${isSmallMobile ? "5px" : "7px"};
         }
 
         .form-field label {
           color: #ffffff;
 
-          font-size: 13px;
+          font-size: ${isSmallMobile ? "11px" : "13px"};
           font-weight: 400;
 
           line-height: 1.2;
@@ -382,7 +426,7 @@ export default function ContactSection() {
 
           font-family: var(--font-poppins), Poppins, sans-serif;
 
-          font-size: 13px;
+          font-size: ${isSmallMobile ? "11px" : "13px"};
           font-weight: 400;
 
           transition:
@@ -392,14 +436,14 @@ export default function ContactSection() {
         }
 
         .form-field input {
-          height: 46px;
-          padding: 0 20px;
+          height: ${isSmallMobile ? "40px" : isMobile ? "45px" : "46px"};
+          padding: 0 ${isSmallMobile ? "14px" : "20px"};
         }
 
         .form-field textarea {
-          min-height: 115px;
+          min-height: ${isSmallMobile ? "100px" : isMobile ? "120px" : "115px"};
 
-          padding: 15px 20px;
+          padding: ${isSmallMobile ? "12px 14px" : "15px 20px"};
 
           resize: vertical;
         }
@@ -424,9 +468,9 @@ export default function ContactSection() {
 
         .contact-submit {
           width: 100%;
-          height: 46px;
+          height: ${isSmallMobile ? "40px" : isMobile ? "45px" : "46px"};
 
-          margin-top: 1px;
+          margin-top: ${isSmallMobile ? "0" : "1px"};
 
           border: none;
           border-radius: 999px;
@@ -444,7 +488,7 @@ export default function ContactSection() {
 
           font-family: var(--font-poppins), Poppins, sans-serif;
 
-          font-size: 12px;
+          font-size: ${isSmallMobile ? "10px" : "12px"};
           font-weight: 500;
 
           transition:
@@ -466,7 +510,7 @@ export default function ContactSection() {
         }
 
         .submit-arrow {
-          font-size: 20px;
+          font-size: ${isSmallMobile ? "16px" : "20px"};
           font-weight: 300;
           line-height: 1;
         }
@@ -481,7 +525,7 @@ export default function ContactSection() {
 
             max-width: 760px;
 
-            gap: 55px;
+            gap: ${isSmallMobile ? "32px" : "55px"};
           }
 
           .contact-info {
@@ -504,52 +548,9 @@ export default function ContactSection() {
             background-position: center;
           }
 
-          .contact-container {
-            padding: 55px 20px 60px;
-
-            gap: 40px;
-          }
-
-          .contact-heading {
-            margin-top: 15px;
-
-            font-size: clamp(40px, 12vw, 55px);
-
-            letter-spacing: -1.8px;
-          }
-
-          .contact-intro {
-            font-size: 12px;
-          }
-
-          .contact-detail h3 {
-            font-size: 14px;
-          }
-
-          .contact-detail p {
-            font-size: 11px;
-          }
-
           .form-row {
             grid-template-columns: 1fr;
-            gap: 17px;
-          }
-
-          .form-field label {
-            font-size: 12px;
-          }
-
-          .form-field input {
-            height: 45px;
-          }
-
-          .form-field input,
-          .form-field textarea {
-            font-size: 12px;
-          }
-
-          .form-field textarea {
-            min-height: 120px;
+            gap: ${isSmallMobile ? "12px" : "17px"};
           }
         }
       `}</style>

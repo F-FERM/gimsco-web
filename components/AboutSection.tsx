@@ -4,25 +4,75 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function AboutSection() {
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
+  const [viewport, setViewport] = useState({
+    width: 1440,
+    height: 900,
+  });
 
   useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-
-      setIsMobile(width <= 700);
-      setIsTablet(width > 700 && width <= 1000);
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
     };
 
-    handleResize();
+    updateViewport();
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", updateViewport);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", updateViewport);
     };
   }, []);
+
+  const width = viewport.width;
+
+  const isSmallMobile = width <= 480;
+  const isMobile = width <= 767;
+  const isTablet = width >= 768 && width <= 1023;
+  const isSmallDesktop = width >= 1024 && width <= 1279;
+  const isDesktop = width >= 1280;
+
+  const sectionPadding = isSmallMobile
+    ? "50px 18px"
+    : isMobile
+      ? "60px 24px"
+      : isTablet
+        ? "75px 35px"
+        : "85px 50px";
+
+  const gridGap = isSmallMobile
+    ? "35px"
+    : isMobile
+      ? "50px"
+      : isTablet
+        ? "45px"
+        : "70px";
+
+  const headingSize = isSmallMobile
+    ? "clamp(32px, 10vw, 42px)"
+    : isMobile
+      ? "clamp(38px, 10vw, 52px)"
+      : isTablet
+        ? "clamp(42px, 6vw, 58px)"
+        : "clamp(48px, 4.4vw, 66px)";
+
+  const descriptionSize = isSmallMobile
+    ? "11px"
+    : isMobile
+      ? "12px"
+      : "clamp(11px, 0.85vw, 13px)";
+
+  const statSize = isSmallMobile
+    ? "28px"
+    : isMobile
+      ? "34px"
+      : "clamp(38px, 3.2vw, 48px)";
+
+  const statLabelSize = isSmallMobile ? "9px" : isMobile ? "10px" : "11px";
+
+  const lineWidth = isSmallMobile ? "18px" : isMobile ? "25px" : "70px";
 
   return (
     <section
@@ -31,7 +81,7 @@ export default function AboutSection() {
         width: "100%",
         background: "#FFFFFF",
         boxSizing: "border-box",
-        padding: isMobile ? "60px 24px" : isTablet ? "75px 35px" : "85px 50px",
+        padding: sectionPadding,
       }}
     >
       <div
@@ -44,7 +94,7 @@ export default function AboutSection() {
             ? "1fr"
             : "minmax(0, 1.45fr) minmax(300px, 0.9fr)",
           alignItems: "center",
-          gap: isMobile ? "50px" : isTablet ? "45px" : "70px",
+          gap: gridGap,
           boxSizing: "border-box",
         }}
       >
@@ -89,7 +139,7 @@ export default function AboutSection() {
               style={{
                 color: "#777777",
                 fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                fontSize: "8px",
+                fontSize: isSmallMobile ? "7px" : "8px",
                 fontWeight: 400,
                 lineHeight: 1,
                 whiteSpace: "nowrap",
@@ -110,14 +160,14 @@ export default function AboutSection() {
               maxWidth: "760px",
               color: "#090909",
               fontFamily: "var(--font-poppins), Poppins, sans-serif",
-              fontSize: isMobile
-                ? "clamp(38px, 10vw, 52px)"
-                : isTablet
-                  ? "clamp(42px, 6vw, 58px)"
-                  : "clamp(48px, 4.4vw, 66px)",
+              fontSize: headingSize,
               fontWeight: 400,
               lineHeight: 1.12,
-              letterSpacing: isMobile ? "-1.5px" : "-2.2px",
+              letterSpacing: isSmallMobile
+                ? "-1.2px"
+                : isMobile
+                  ? "-1.5px"
+                  : "-2.2px",
             }}
           >
             35 Years of{" "}
@@ -147,7 +197,7 @@ export default function AboutSection() {
           <div
             style={{
               maxWidth: "760px",
-              marginTop: isMobile ? "20px" : "18px",
+              marginTop: isSmallMobile ? "16px" : isMobile ? "20px" : "18px",
             }}
           >
             <p
@@ -155,9 +205,9 @@ export default function AboutSection() {
                 margin: 0,
                 color: "#777777",
                 fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                fontSize: isMobile ? "12px" : "clamp(11px, 0.85vw, 13px)",
+                fontSize: descriptionSize,
                 fontWeight: 400,
-                lineHeight: 1.5,
+                lineHeight: isSmallMobile ? 1.5 : 1.5,
               }}
             >
               Gulf International Marine Services Co. (GIMSCO) has proudly served
@@ -168,12 +218,12 @@ export default function AboutSection() {
 
             <p
               style={{
-                margin: "14px 0 0",
+                margin: isSmallMobile ? "10px 0 0" : "14px 0 0",
                 color: "#777777",
                 fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                fontSize: isMobile ? "12px" : "clamp(11px, 0.85vw, 13px)",
+                fontSize: descriptionSize,
                 fontWeight: 400,
-                lineHeight: 1.5,
+                lineHeight: isSmallMobile ? 1.5 : 1.5,
               }}
             >
               Our success is built on delivering quality products, reliable
@@ -184,27 +234,29 @@ export default function AboutSection() {
           </div>
 
           {/* =====================================================
-    BOTTOM COMPANY STATS
-===================================================== */}
+              BOTTOM COMPANY STATS
+          ===================================================== */}
 
           <div
             style={{
               width: "100%",
               maxWidth: "760px",
-              marginTop: isMobile ? "32px" : "30px",
+              marginTop: isSmallMobile ? "24px" : isMobile ? "32px" : "30px",
               display: "flex",
               alignItems: "flex-start",
               boxSizing: "border-box",
+              flexWrap: isSmallMobile ? "wrap" : "nowrap",
+              gap: isSmallMobile ? "12px" : "0",
             }}
           >
             {/* ===================================================
-      1990
-  =================================================== */}
+                1990
+            =================================================== */}
 
             <div
               style={{
-                flex: 1,
-                minWidth: 0,
+                flex: isSmallMobile ? "1 1 30%" : 1,
+                minWidth: isSmallMobile ? "60px" : 0,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "flex-start",
@@ -214,10 +266,10 @@ export default function AboutSection() {
                 style={{
                   color: "#000000",
                   fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                  fontSize: isMobile ? "34px" : "clamp(38px, 3.2vw, 48px)",
+                  fontSize: statSize,
                   fontWeight: 400,
                   lineHeight: 1,
-                  letterSpacing: "-2px",
+                  letterSpacing: isSmallMobile ? "-1px" : "-2px",
                   whiteSpace: "nowrap",
                 }}
               >
@@ -226,10 +278,10 @@ export default function AboutSection() {
 
               <div
                 style={{
-                  marginTop: "7px",
+                  marginTop: isSmallMobile ? "4px" : "7px",
                   color: "#777777",
                   fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                  fontSize: isMobile ? "10px" : "11px",
+                  fontSize: statLabelSize,
                   fontWeight: 400,
                   lineHeight: 1.3,
                 }}
@@ -239,29 +291,33 @@ export default function AboutSection() {
             </div>
 
             {/* ===================================================
-      FIRST CONNECTING LINE
-  =================================================== */}
+                FIRST CONNECTING LINE
+            =================================================== */}
 
-            <div
-              style={{
-                width: isMobile ? "25px" : "70px",
-                flexShrink: 0,
-                marginTop: isMobile ? "18px" : "24px",
-                marginLeft: isMobile ? "5px" : "8px",
-                marginRight: isMobile ? "5px" : "8px",
-                borderTop: "5px solid #000000",
-                boxSizing: "border-box",
-              }}
-            />
+            {!isSmallMobile && (
+              <div
+                style={{
+                  width: lineWidth,
+                  flexShrink: 0,
+                  marginTop: isMobile ? "18px" : "24px",
+                  marginLeft: isSmallMobile ? "3px" : isMobile ? "5px" : "8px",
+                  marginRight: isSmallMobile ? "3px" : isMobile ? "5px" : "8px",
+                  borderTop: isSmallMobile
+                    ? "3px solid #000000"
+                    : "5px solid #000000",
+                  boxSizing: "border-box",
+                }}
+              />
+            )}
 
             {/* ===================================================
-      35+
-  =================================================== */}
+                35+
+            =================================================== */}
 
             <div
               style={{
-                flex: 1,
-                minWidth: 0,
+                flex: isSmallMobile ? "1 1 30%" : 1,
+                minWidth: isSmallMobile ? "60px" : 0,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "flex-start",
@@ -271,10 +327,10 @@ export default function AboutSection() {
                 style={{
                   color: "#000000",
                   fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                  fontSize: isMobile ? "34px" : "clamp(38px, 3.2vw, 48px)",
+                  fontSize: statSize,
                   fontWeight: 400,
                   lineHeight: 1,
-                  letterSpacing: "-2px",
+                  letterSpacing: isSmallMobile ? "-1px" : "-2px",
                   whiteSpace: "nowrap",
                 }}
               >
@@ -283,10 +339,10 @@ export default function AboutSection() {
 
               <div
                 style={{
-                  marginTop: "7px",
+                  marginTop: isSmallMobile ? "4px" : "7px",
                   color: "#777777",
                   fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                  fontSize: isMobile ? "10px" : "11px",
+                  fontSize: statLabelSize,
                   fontWeight: 400,
                   lineHeight: 1.3,
                 }}
@@ -296,29 +352,33 @@ export default function AboutSection() {
             </div>
 
             {/* ===================================================
-      SECOND CONNECTING LINE
-  =================================================== */}
+                SECOND CONNECTING LINE
+            =================================================== */}
 
-            <div
-              style={{
-                width: isMobile ? "25px" : "70px",
-                flexShrink: 0,
-                marginTop: isMobile ? "18px" : "24px",
-                marginLeft: isMobile ? "5px" : "8px",
-                marginRight: isMobile ? "5px" : "8px",
-                borderTop: "5px solid #000000",
-                boxSizing: "border-box",
-              }}
-            />
+            {!isSmallMobile && (
+              <div
+                style={{
+                  width: lineWidth,
+                  flexShrink: 0,
+                  marginTop: isMobile ? "18px" : "24px",
+                  marginLeft: isSmallMobile ? "3px" : isMobile ? "5px" : "8px",
+                  marginRight: isSmallMobile ? "3px" : isMobile ? "5px" : "8px",
+                  borderTop: isSmallMobile
+                    ? "3px solid #000000"
+                    : "5px solid #000000",
+                  boxSizing: "border-box",
+                }}
+              />
+            )}
 
             {/* ===================================================
-      GLOBAL
-  =================================================== */}
+                GLOBAL
+            =================================================== */}
 
             <div
               style={{
-                flex: 1,
-                minWidth: 0,
+                flex: isSmallMobile ? "1 1 30%" : 1,
+                minWidth: isSmallMobile ? "60px" : 0,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "flex-start",
@@ -328,10 +388,10 @@ export default function AboutSection() {
                 style={{
                   color: "#000000",
                   fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                  fontSize: isMobile ? "34px" : "clamp(38px, 3.2vw, 48px)",
+                  fontSize: statSize,
                   fontWeight: 400,
                   lineHeight: 1,
-                  letterSpacing: "-2px",
+                  letterSpacing: isSmallMobile ? "-1px" : "-2px",
                   whiteSpace: "nowrap",
                 }}
               >
@@ -340,10 +400,10 @@ export default function AboutSection() {
 
               <div
                 style={{
-                  marginTop: "7px",
+                  marginTop: isSmallMobile ? "4px" : "7px",
                   color: "#777777",
                   fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                  fontSize: isMobile ? "10px" : "11px",
+                  fontSize: statLabelSize,
                   fontWeight: 400,
                   lineHeight: 1.3,
                 }}
@@ -363,9 +423,9 @@ export default function AboutSection() {
             position: "relative",
             width: "100%",
             maxWidth: isMobile ? "100%" : "470px",
-            justifySelf: "end",
-            aspectRatio: "1 / 0.91",
-            borderRadius: isMobile ? "22px" : "20px",
+            justifySelf: isMobile ? "center" : "end",
+            aspectRatio: isSmallMobile ? "1 / 0.9" : "1 / 0.91",
+            borderRadius: isSmallMobile ? "18px" : isMobile ? "22px" : "20px",
             overflow: "hidden",
             boxSizing: "border-box",
           }}
@@ -374,7 +434,7 @@ export default function AboutSection() {
             src="/images/about-ship.jpg"
             alt="GIMSCO maritime operations"
             fill
-            sizes="(max-width: 700px) 100vw, 470px"
+            sizes="(max-width: 480px) 100vw, (max-width: 767px) 100vw, 470px"
             style={{
               objectFit: "cover",
               objectPosition: "center",
@@ -400,11 +460,11 @@ export default function AboutSection() {
           <div
             style={{
               position: "absolute",
-              top: isMobile ? "18px" : "15px",
-              left: isMobile ? "18px" : "15px",
-              width: isMobile ? "150px" : "145px",
-              padding: isMobile ? "12px" : "11px",
-              borderRadius: "12px",
+              top: isSmallMobile ? "14px" : isMobile ? "18px" : "15px",
+              left: isSmallMobile ? "14px" : isMobile ? "18px" : "15px",
+              width: isSmallMobile ? "120px" : isMobile ? "150px" : "145px",
+              padding: isSmallMobile ? "10px" : isMobile ? "12px" : "11px",
+              borderRadius: isSmallMobile ? "10px" : "12px",
               background: "rgba(125, 140, 158, 0.42)",
               border: "1px solid rgba(255, 255, 255, 0.28)",
               backdropFilter: "blur(10px)",
@@ -418,7 +478,7 @@ export default function AboutSection() {
                 alignItems: "baseline",
                 color: "#FFFFFF",
                 fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                fontSize: isMobile ? "28px" : "25px",
+                fontSize: isSmallMobile ? "22px" : isMobile ? "28px" : "25px",
                 fontWeight: 300,
                 lineHeight: 1,
                 letterSpacing: "-1px",
@@ -438,12 +498,12 @@ export default function AboutSection() {
 
             <div
               style={{
-                marginTop: "5px",
+                marginTop: isSmallMobile ? "3px" : "5px",
                 color: "rgba(255, 255, 255, 0.82)",
                 fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                fontSize: isMobile ? "8px" : "7px",
+                fontSize: isSmallMobile ? "6.5px" : isMobile ? "8px" : "7px",
                 fontWeight: 400,
-                lineHeight: 1.35,
+                lineHeight: isSmallMobile ? 1.2 : 1.35,
               }}
             >
               Satisfied clients served

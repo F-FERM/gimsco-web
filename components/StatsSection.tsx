@@ -28,25 +28,85 @@ const stats = [
 ];
 
 export default function StatsSection() {
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
+  const [viewport, setViewport] = useState({
+    width: 1440,
+    height: 900,
+  });
 
   useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-
-      setIsMobile(width <= 600);
-      setIsTablet(width > 600 && width <= 900);
+    const updateViewport = () => {
+      setViewport({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
     };
 
-    handleResize();
+    updateViewport();
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", updateViewport);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", updateViewport);
     };
   }, []);
+
+  const width = viewport.width;
+
+  const isSmallMobile = width <= 480;
+  const isMobile = width <= 600;
+  const isTablet = width > 600 && width <= 900;
+
+  const sectionPadding = isSmallMobile
+    ? "40px 16px"
+    : isMobile
+      ? "48px 24px"
+      : isTablet
+        ? "55px 30px"
+        : "58px 40px";
+
+  const gridColumns = isSmallMobile
+    ? "repeat(2, minmax(0, 1fr))"
+    : isMobile
+      ? "repeat(2, minmax(0, 1fr))"
+      : isTablet
+        ? "repeat(3, minmax(0, 1fr))"
+        : "repeat(5, minmax(0, 1fr))";
+
+  const gridGap = isSmallMobile
+    ? "12px"
+    : isMobile
+      ? "20px"
+      : isTablet
+        ? "30px"
+        : "45px";
+
+  const rowGap = isSmallMobile
+    ? "28px"
+    : isMobile
+      ? "42px"
+      : isTablet
+        ? "45px"
+        : "0";
+
+  const valueSize = isSmallMobile
+    ? "clamp(32px, 11vw, 42px)"
+    : isMobile
+      ? "clamp(40px, 11vw, 54px)"
+      : isTablet
+        ? "clamp(42px, 7vw, 58px)"
+        : "clamp(48px, 4.8vw, 68px)";
+
+  const labelSize = isSmallMobile
+    ? "10px"
+    : isMobile
+      ? "12px"
+      : isTablet
+        ? "13px"
+        : "14px";
+
+  const labelMargin = isSmallMobile ? "6px" : isMobile ? "12px" : "12px";
+
+  const alignItems = isMobile ? "center" : "flex-start";
 
   return (
     <section
@@ -54,7 +114,7 @@ export default function StatsSection() {
         width: "100%",
         background: "#2D3893",
         boxSizing: "border-box",
-        padding: isMobile ? "48px 24px" : isTablet ? "55px 30px" : "58px 40px",
+        padding: sectionPadding,
       }}
     >
       <div
@@ -63,15 +123,11 @@ export default function StatsSection() {
           maxWidth: "1280px",
           margin: "0 auto",
           display: "grid",
-          gridTemplateColumns: isMobile
-            ? "repeat(2, minmax(0, 1fr))"
-            : isTablet
-              ? "repeat(3, minmax(0, 1fr))"
-              : "repeat(5, minmax(0, 1fr))",
+          gridTemplateColumns: gridColumns,
           alignItems: "center",
           justifyContent: "center",
-          columnGap: isMobile ? "20px" : isTablet ? "30px" : "45px",
-          rowGap: isMobile ? "42px" : isTablet ? "45px" : "0",
+          columnGap: gridGap,
+          rowGap: rowGap,
           boxSizing: "border-box",
         }}
       >
@@ -81,7 +137,7 @@ export default function StatsSection() {
             style={{
               display: "flex",
               flexDirection: "column",
-              alignItems: isMobile ? "center" : "flex-start",
+              alignItems: alignItems,
               justifyContent: "center",
               minWidth: 0,
             }}
@@ -96,14 +152,14 @@ export default function StatsSection() {
                 padding: 0,
                 color: "#FFFFFF",
                 fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                fontSize: isMobile
-                  ? "clamp(40px, 11vw, 54px)"
-                  : isTablet
-                    ? "clamp(42px, 7vw, 58px)"
-                    : "clamp(48px, 4.8vw, 68px)",
+                fontSize: valueSize,
                 fontWeight: 300,
                 lineHeight: 1,
-                letterSpacing: isMobile ? "-1.5px" : "-2px",
+                letterSpacing: isSmallMobile
+                  ? "-1px"
+                  : isMobile
+                    ? "-1.5px"
+                    : "-2px",
                 whiteSpace: "nowrap",
               }}
             >
@@ -127,14 +183,15 @@ export default function StatsSection() {
 
             <div
               style={{
-                marginTop: "12px",
+                marginTop: labelMargin,
                 color: "rgba(255, 255, 255, 0.78)",
                 fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                fontSize: isMobile ? "12px" : isTablet ? "13px" : "14px",
+                fontSize: labelSize,
                 fontWeight: 400,
                 lineHeight: 1.4,
                 letterSpacing: "0",
-                whiteSpace: "nowrap",
+                whiteSpace: isSmallMobile ? "normal" : "nowrap",
+                textAlign: isMobile ? "center" : "left",
               }}
             >
               {stat.label}
