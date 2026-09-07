@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -11,14 +11,29 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "GIMSCO",
-  description: "GIMSCO",
+  description:
+    "Gulf International Marine Services Co. - Ship Chandling Services",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="en" className={`${poppins.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-[var(--font-poppins)]">
+    <html lang="en" className={poppins.variable}>
+      <body
+        style={{
+          margin: 0,
+          padding: 0,
+          minHeight: "100vh",
+          width: "100%",
+          fontFamily: "var(--font-poppins), Poppins, sans-serif",
+          background: "#ffffff",
+        }}
+      >
         <Navbar />
+
         {children}
       </body>
     </html>
