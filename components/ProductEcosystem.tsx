@@ -142,6 +142,7 @@ export default function ProductEcosystem() {
         paddingRight: isSmallMobile ? "12px" : isMobile ? "16px" : "24px",
         boxSizing: "border-box",
         overflow: "hidden",
+        marginBottom: "15px",
       }}
     >
       {/* =====================================================
