@@ -36,6 +36,13 @@ const PHONE_LINK = "tel:+971547965591";
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+
+  /*
+   * =========================================================
+   * RESPONSIVE NAVBAR
+   * =========================================================
+   */
 
   useEffect(() => {
     const handleResize = () => {
@@ -43,7 +50,6 @@ export default function Navbar() {
 
       setIsMobile(mobile);
 
-      // Automatically close mobile menu when switching to desktop
       if (!mobile) {
         setMenuOpen(false);
       }
@@ -59,24 +65,136 @@ export default function Navbar() {
   }, []);
 
   /*
-   * Smooth scroll to a section without changing the URL.
+   * =========================================================
+   * DETECT ACTIVE SECTION WHILE SCROLLING
+   * =========================================================
    */
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const navbarHeight = isMobile ? 76 : 86;
+
+      /*
+       * Point slightly below the navbar.
+       * The section closest to this point becomes active.
+       */
+      const scrollPosition = window.scrollY + navbarHeight + 120;
+
+      let currentSection = "home";
+
+      for (const item of navItems) {
+        const section = document.getElementById(item.sectionId);
+
+        if (!section) {
+          continue;
+        }
+
+        const sectionTop = section.offsetTop;
+
+        if (scrollPosition >= sectionTop) {
+          currentSection = item.sectionId;
+        }
+      }
+
+      setActiveSection(currentSection);
+
+      /*
+       * Update URL while scrolling.
+       *
+       * This does NOT reload the page.
+       */
+      const currentHash = window.location.hash.replace("#", "");
+
+      if (currentSection && currentSection !== currentHash) {
+        window.history.replaceState(null, "", `#${currentSection}`);
+      }
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isMobile]);
+
+  /*
+   * =========================================================
+   * HANDLE INITIAL URL HASH
+   * =========================================================
+   */
+
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+
+    if (!hash) {
+      return;
+    }
+
+    const validSection = navItems.some((item) => item.sectionId === hash);
+
+    if (validSection) {
+      setActiveSection(hash);
+
+      /*
+       * Wait for page sections to render
+       * before scrolling to the hash.
+       */
+      const timer = window.setTimeout(() => {
+        const section = document.getElementById(hash);
+
+        if (!section) {
+          return;
+        }
+
+        const navbarHeight = window.innerWidth <= 768 ? 76 : 86;
+
+        const sectionTop =
+          section.getBoundingClientRect().top + window.scrollY - navbarHeight;
+
+        window.scrollTo({
+          top: Math.max(0, sectionTop),
+          behavior: "smooth",
+        });
+      }, 100);
+
+      return () => {
+        window.clearTimeout(timer);
+      };
+    }
+  }, []);
+
+  /*
+   * =========================================================
+   * SMOOTH SCROLL TO SECTION
+   * =========================================================
+   */
+
   const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
 
     if (!section) {
       console.warn(`Section with id="${sectionId}" was not found.`);
+
       return;
     }
+
+    /*
+     * Immediately make clicked item active.
+     */
+    setActiveSection(sectionId);
+
+    /*
+     * Update URL hash without page reload.
+     */
+    window.history.pushState(null, "", `#${sectionId}`);
 
     const navbarHeight = isMobile ? 76 : 86;
 
     const sectionTop =
       section.getBoundingClientRect().top + window.scrollY - navbarHeight;
 
-    window.history.pushState(null, "", `#${sectionId}`);
-
-    // Smooth scroll
     window.scrollTo({
       top: Math.max(0, sectionTop),
       behavior: "smooth",
@@ -89,6 +207,7 @@ export default function Navbar() {
   /*
    * Handle navbar item click.
    */
+
   const handleNavClick = (
     event: React.MouseEvent<HTMLButtonElement>,
     sectionId: string,
@@ -101,11 +220,18 @@ export default function Navbar() {
   /*
    * Handle logo click.
    */
+
   const handleLogoClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     scrollToSection("home");
   };
+
+  /*
+   * =========================================================
+   * RENDER
+   * =========================================================
+   */
 
   return (
     <header
@@ -113,13 +239,14 @@ export default function Navbar() {
         position: "sticky",
         top: 0,
         left: 0,
+
         width: "100%",
 
         height: isMobile ? "76px" : "86px",
 
         /*
-         * Negative margin keeps the Home hero starting
-         * at the same top position as the navbar.
+         * Keeps the hero starting at the same
+         * position underneath the navbar.
          */
         marginBottom: isMobile ? "-76px" : "-86px",
 
@@ -128,6 +255,7 @@ export default function Navbar() {
         background: "#FFFFFF2B",
 
         backdropFilter: "blur(14px)",
+
         WebkitBackdropFilter: "blur(14px)",
 
         borderBottom: "1px solid rgba(255, 255, 255, 0.18)",
@@ -144,6 +272,7 @@ export default function Navbar() {
       <div
         style={{
           width: "100%",
+
           maxWidth: "1280px",
 
           height: "100%",
@@ -153,7 +282,9 @@ export default function Navbar() {
           padding: isMobile ? "0 20px" : "0 clamp(24px, 3vw, 32px)",
 
           display: "flex",
+
           alignItems: "center",
+
           justifyContent: "space-between",
 
           boxSizing: "border-box",
@@ -171,7 +302,9 @@ export default function Navbar() {
           aria-label="Go to home"
           style={{
             display: "flex",
+
             alignItems: "center",
+
             justifyContent: "flex-start",
 
             flexShrink: 0,
@@ -179,9 +312,11 @@ export default function Navbar() {
             width: "auto",
 
             padding: 0,
+
             margin: 0,
 
             border: "none",
+
             background: "transparent",
 
             cursor: "pointer",
@@ -218,7 +353,9 @@ export default function Navbar() {
             aria-label="Main navigation"
             style={{
               display: "flex",
+
               alignItems: "center",
+
               justifyContent: "center",
 
               flex: 1,
@@ -228,11 +365,12 @@ export default function Navbar() {
               gap: "clamp(14px, 2vw, 32px)",
 
               marginLeft: "auto",
+
               marginRight: "clamp(20px, 2.5vw, 40px)",
             }}
           >
-            {navItems.map((item, index) => {
-              const isHome = index === 0;
+            {navItems.map((item) => {
+              const isActive = activeSection === item.sectionId;
 
               return (
                 <button
@@ -243,7 +381,9 @@ export default function Navbar() {
                     position: "relative",
 
                     display: "inline-flex",
+
                     alignItems: "center",
+
                     justifyContent: "center",
 
                     minHeight: "44px",
@@ -251,15 +391,16 @@ export default function Navbar() {
                     padding: "0",
 
                     border: "none",
+
                     background: "transparent",
 
-                    color: isHome ? "#293C9D" : "#FFFFFF",
+                    color: isActive ? "#293C9D" : "#FFFFFF",
 
                     fontFamily: "var(--font-poppins), Poppins, sans-serif",
 
                     fontSize: "clamp(11px, 0.9vw, 14px)",
 
-                    fontWeight: isHome ? 600 : 400,
+                    fontWeight: isActive ? 600 : 400,
 
                     lineHeight: 1.2,
 
@@ -276,16 +417,14 @@ export default function Navbar() {
                   onMouseEnter={(event) => {
                     event.currentTarget.style.transform = "translateY(-1px)";
 
-                    if (!isHome) {
-                      event.currentTarget.style.color = "#293C9D";
-                    }
+                    event.currentTarget.style.color = "#293C9D";
                   }}
                   onMouseLeave={(event) => {
                     event.currentTarget.style.transform = "translateY(0)";
 
-                    if (!isHome) {
-                      event.currentTarget.style.color = "#FFFFFF";
-                    }
+                    event.currentTarget.style.color = isActive
+                      ? "#293C9D"
+                      : "#FFFFFF";
                   }}
                 >
                   {item.label}
@@ -305,20 +444,25 @@ export default function Navbar() {
             aria-label={`Call GIMSCO at ${PHONE_NUMBER}`}
             style={{
               width: "clamp(175px, 14vw, 205px)",
+
               height: "46px",
 
               flexShrink: 0,
 
               display: "flex",
+
               alignItems: "center",
+
               justifyContent: "center",
 
               gap: "8px",
 
               border: "none",
+
               borderRadius: "30px",
 
               background: "#293C9D",
+
               color: "#FFFFFF",
 
               fontFamily: "var(--font-poppins), Poppins, sans-serif",
@@ -392,19 +536,23 @@ export default function Navbar() {
             onClick={() => setMenuOpen((previous) => !previous)}
             style={{
               width: "46px",
+
               height: "46px",
 
               padding: "8px",
 
               border: "none",
+
               borderRadius: "10px",
 
               background: "rgba(255,255,255,0.55)",
 
               display: "flex",
+
               flexDirection: "column",
 
               alignItems: "center",
+
               justifyContent: "center",
 
               gap: "5px",
@@ -426,6 +574,7 @@ export default function Navbar() {
                 display: "block",
 
                 width: "24px",
+
                 height: "2px",
 
                 background: "#293C9D",
@@ -446,6 +595,7 @@ export default function Navbar() {
                 display: "block",
 
                 width: "24px",
+
                 height: "2px",
 
                 background: "#293C9D",
@@ -466,6 +616,7 @@ export default function Navbar() {
                 display: "block",
 
                 width: "24px",
+
                 height: "2px",
 
                 background: "#293C9D",
@@ -493,6 +644,7 @@ export default function Navbar() {
             position: "absolute",
 
             top: "76px",
+
             left: 0,
 
             width: "100%",
@@ -500,6 +652,7 @@ export default function Navbar() {
             background: "rgba(255,255,255,0.96)",
 
             backdropFilter: "blur(16px)",
+
             WebkitBackdropFilter: "blur(16px)",
 
             borderTop: "1px solid rgba(255,255,255,0.5)",
@@ -517,11 +670,12 @@ export default function Navbar() {
               width: "100%",
 
               display: "flex",
+
               flexDirection: "column",
             }}
           >
-            {navItems.map((item, index) => {
-              const isHome = index === 0;
+            {navItems.map((item) => {
+              const isActive = activeSection === item.sectionId;
 
               return (
                 <button
@@ -530,9 +684,13 @@ export default function Navbar() {
                   onClick={(event) => handleNavClick(event, item.sectionId)}
                   style={{
                     display: "flex",
+
                     alignItems: "center",
 
+                    justifyContent: "space-between",
+
                     width: "100%",
+
                     minHeight: "50px",
 
                     padding: "0 4px",
@@ -543,7 +701,7 @@ export default function Navbar() {
 
                     background: "transparent",
 
-                    color: isHome ? "#293C9D" : "#222222",
+                    color: isActive ? "#293C9D" : "#222222",
 
                     textAlign: "left",
 
@@ -551,7 +709,7 @@ export default function Navbar() {
 
                     fontSize: "15px",
 
-                    fontWeight: isHome ? 600 : 400,
+                    fontWeight: isActive ? 600 : 400,
 
                     cursor: "pointer",
 
@@ -567,14 +725,14 @@ export default function Navbar() {
                     event.currentTarget.style.paddingLeft = "8px";
                   }}
                   onMouseLeave={(event) => {
-                    event.currentTarget.style.color = isHome
+                    event.currentTarget.style.color = isActive
                       ? "#293C9D"
                       : "#222222";
 
                     event.currentTarget.style.paddingLeft = "4px";
                   }}
                 >
-                  {item.label}
+                  <span>{item.label}</span>
                 </button>
               );
             })}
@@ -588,6 +746,7 @@ export default function Navbar() {
               aria-label={`Call GIMSCO at ${PHONE_NUMBER}`}
               style={{
                 width: "100%",
+
                 minHeight: "50px",
 
                 marginTop: "18px",
@@ -595,15 +754,19 @@ export default function Navbar() {
                 padding: "0 18px",
 
                 display: "flex",
+
                 alignItems: "center",
+
                 justifyContent: "center",
 
                 gap: "9px",
 
                 border: "none",
+
                 borderRadius: "28px",
 
                 background: "#293C9D",
+
                 color: "#FFFFFF",
 
                 fontFamily: "var(--font-poppins), Poppins, sans-serif",
