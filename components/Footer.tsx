@@ -257,10 +257,40 @@ export default function Footer() {
                 <br />
                 Downtown, Dubai, UAE
               </div>
-
-              <div>+971 4 442 0575</div>
-
-              <div>gimsco@emirates.net.ae</div>
+              <a
+                href="tel:+97144420575"
+                style={{
+                  color: "inherit",
+                  textDecoration: "none",
+                  cursor: "pointer",
+                  transition: "color 0.2s ease",
+                }}
+                onMouseEnter={(event) => {
+                  event.currentTarget.style.color = "#FFFFFF";
+                }}
+                onMouseLeave={(event) => {
+                  event.currentTarget.style.color = "inherit";
+                }}
+              >
+                +971 4 442 0575
+              </a>
+              <a
+                href="mailto:gimsco@emirates.net.ae"
+                style={{
+                  color: "inherit",
+                  textDecoration: "none",
+                  cursor: "pointer",
+                  transition: "color 0.2s ease",
+                }}
+                onMouseEnter={(event) => {
+                  event.currentTarget.style.color = "#FFFFFF";
+                }}
+                onMouseLeave={(event) => {
+                  event.currentTarget.style.color = "inherit";
+                }}
+              >
+                gimsco@emirates.net.ae
+              </a>
             </div>
           </div>
 
