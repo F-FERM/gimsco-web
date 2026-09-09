@@ -562,7 +562,7 @@ export default function StoreSolutions() {
                     pointerEvents: "none",
                   }}
                 >
-                  <span>Explore Services</span>
+                  <span>Contact Now</span>
 
                   <span
                     style={{
