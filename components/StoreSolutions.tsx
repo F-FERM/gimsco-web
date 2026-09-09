@@ -211,6 +211,7 @@ export default function StoreSolutions() {
         paddingBottom: sectionPadding,
         overflow: "hidden",
         boxSizing: "border-box",
+        marginTop: "30px",
       }}
     >
       {/* =====================================================
