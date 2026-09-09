@@ -542,24 +542,87 @@ export default function StoreSolutions() {
                     EXPLORE SERVICES
                 ================================================= */}
 
-                <div
+                <button
+                  type="button"
+                  onPointerDown={(event) => {
+                    event.stopPropagation();
+                  }}
+                  onMouseDown={(event) => {
+                    event.stopPropagation();
+                  }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+
+                    const contactSection = document.getElementById("contact");
+
+                    if (!contactSection) {
+                      console.warn(
+                        'Contact section with id="contact" was not found.',
+                      );
+                      return;
+                    }
+
+                    const navbar = document.querySelector("nav");
+
+                    const navbarHeight =
+                      navbar instanceof HTMLElement ? navbar.offsetHeight : 0;
+
+                    const sectionTop =
+                      contactSection.getBoundingClientRect().top +
+                      window.scrollY;
+
+                    const scrollPosition = Math.max(
+                      sectionTop - navbarHeight,
+                      0,
+                    );
+
+                    window.scrollTo({
+                      top: scrollPosition,
+                      behavior: "smooth",
+                    });
+
+                    window.history.pushState(null, "", "#contact");
+                  }}
                   style={{
                     position: "absolute",
                     left: titleLeft,
                     bottom: isSmallMobile ? "18px" : "30px",
+
                     display: "flex",
                     alignItems: "center",
+
                     gap: isSmallMobile ? "6px" : "9px",
+
                     color: "#6268D1",
+
                     fontFamily: "var(--font-poppins), Poppins, sans-serif",
+
                     fontSize: exploreSize,
                     fontWeight: 500,
+
                     lineHeight: 1,
+
                     opacity: isHovered ? 1 : 0,
+
                     transform: isHovered ? "translateY(0)" : "translateY(10px)",
+
                     transition: "opacity 0.35s ease, transform 0.35s ease",
-                    zIndex: 4,
-                    pointerEvents: "none",
+
+                    zIndex: 10,
+
+                    cursor: isHovered ? "pointer" : "default",
+
+                    pointerEvents: isHovered ? "auto" : "none",
+
+                    border: "none",
+                    padding: 0,
+                    margin: 0,
+
+                    background: "transparent",
+
+                    appearance: "none",
+
+                    WebkitAppearance: "none",
                   }}
                 >
                   <span>Contact Now</span>
@@ -572,7 +635,7 @@ export default function StoreSolutions() {
                   >
                     →
                   </span>
-                </div>
+                </button>
               </div>
             );
           })}
