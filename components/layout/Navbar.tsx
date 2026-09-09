@@ -74,6 +74,9 @@ export default function Navbar() {
     const sectionTop =
       section.getBoundingClientRect().top + window.scrollY - navbarHeight;
 
+    window.history.pushState(null, "", `#${sectionId}`);
+
+    // Smooth scroll
     window.scrollTo({
       top: Math.max(0, sectionTop),
       behavior: "smooth",
