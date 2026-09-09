@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const milestones = [
   {
@@ -26,10 +26,24 @@ const milestones = [
 ];
 
 export default function CompanyHistory() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const hasStartedRef = useRef(false);
+
+  const [progress, setProgress] = useState(0);
+
   const [viewport, setViewport] = useState({
     width: 1440,
     height: 900,
   });
+
+  const isMobile = viewport.width <= 767;
+  const isSmallMobile = viewport.width <= 480;
+  const isTablet = viewport.width >= 768 && viewport.width <= 1023;
+
+  /* =====================================================
+     VIEWPORT
+  ===================================================== */
 
   useEffect(() => {
     const updateViewport = () => {
@@ -48,223 +62,591 @@ export default function CompanyHistory() {
     };
   }, []);
 
-  const width = viewport.width;
+  /* =====================================================
+     TIMELINE ANIMATION
+     STARTS IMMEDIATELY WHEN SECTION ENTERS VIEWPORT
+  ===================================================== */
 
-  const isSmallMobile = width <= 480;
-  const isMobile = width <= 767;
-  const isTablet = width >= 768 && width <= 1023;
+  useEffect(() => {
+    const section = sectionRef.current;
 
-  const sectionPadding = isSmallMobile
-    ? "50px 16px"
-    : isMobile
-      ? "clamp(70px, 8vw, 100px) 20px"
-      : "clamp(70px, 8vw, 125px) 24px";
+    if (!section) return;
 
-  const headingSize = isSmallMobile
-    ? "clamp(34px, 10vw, 44px)"
-    : isMobile
-      ? "clamp(44px, 5.2vw, 52px)"
-      : "clamp(44px, 5.2vw, 68px)";
+    const startTimelineAnimation = () => {
+      if (hasStartedRef.current) return;
 
-  const yearSize = isSmallMobile
-    ? "clamp(16px, 1.8vw, 20px)"
-    : isMobile
-      ? "clamp(20px, 1.8vw, 22px)"
-      : "clamp(20px, 1.8vw, 25px)";
+      hasStartedRef.current = true;
 
-  const descSize = isSmallMobile
-    ? "clamp(10px, 0.95vw, 11px)"
-    : "clamp(11px, 0.95vw, 13px)";
+      /*
+       * Start from completely empty.
+       */
+      setProgress(0);
 
-  const gridColumns = isMobile
-    ? "repeat(1, minmax(0, 1fr))"
-    : isTablet
-      ? "repeat(2, minmax(0, 1fr))"
-      : "repeat(4, minmax(0, 1fr))";
+      /*
+       * EXACTLY 2 SECONDS
+       */
+      const duration = 2000;
 
-  const dotSize = isSmallMobile ? "14px" : "18px";
+      const startTime = performance.now();
 
-  const timelineMargin = isSmallMobile ? "30px" : isMobile ? "40px" : "48px";
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+
+        const rawProgress = Math.min(elapsed / duration, 1);
+
+        /*
+         * Smooth ease-out.
+         *
+         * 0   -> 0%
+         * 0.5 -> ~87.5%
+         * 1   -> 100%
+         */
+        const easedProgress = 1 - Math.pow(1 - rawProgress, 3);
+
+        setProgress(easedProgress);
+
+        if (rawProgress < 1) {
+          animationFrameRef.current = requestAnimationFrame(animate);
+        } else {
+          /*
+           * Guarantee EXACTLY 100%.
+           */
+          setProgress(1);
+          animationFrameRef.current = null;
+        }
+      };
+
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    /*
+     * Start when even a small portion of the section
+     * enters the viewport.
+     */
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          observer.disconnect();
+
+          /*
+           * IMPORTANT:
+           * Start immediately.
+           */
+          startTimelineAnimation();
+        }
+      },
+      {
+        threshold: 0.05,
+      },
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
+
+  /* =====================================================
+     MILESTONE ACTIVE STATE
+  ===================================================== */
+
+  const isMilestoneActive = (index: number) => {
+    /*
+     * 1990     = 0%
+     * Regional = 33.33%
+     * Global   = 66.66%
+     * Today    = 100%
+     */
+    const milestoneProgress = index / (milestones.length - 1);
+
+    return progress >= milestoneProgress;
+  };
+
+  /* =====================================================
+     RENDER
+  ===================================================== */
 
   return (
     <section
+      ref={sectionRef}
       style={{
         width: "100%",
         background: "#FFFFFF",
-        padding: sectionPadding,
         boxSizing: "border-box",
         overflow: "hidden",
+
+        padding: isSmallMobile
+          ? "65px 18px 70px"
+          : isMobile
+            ? "75px 24px 80px"
+            : isTablet
+              ? "90px 40px 95px"
+              : "110px 60px 120px",
       }}
     >
       <div
         style={{
           width: "100%",
-          maxWidth: "1160px",
+          maxWidth: "1180px",
           margin: "0 auto",
-          boxSizing: "border-box",
         }}
       >
-        {/* Badge */}
+        {/* =================================================
+            BADGE
+        ================================================= */}
+
         <div
           style={{
             display: "inline-flex",
             alignItems: "center",
-            gap: "6px",
-            height: isSmallMobile ? "22px" : "25px",
-            padding: isSmallMobile ? "0 8px 0 5px" : "0 11px 0 6px",
-            marginBottom: isSmallMobile ? "10px" : "14px",
-            borderRadius: "20px",
-            background: "#E8E8EC",
-            border: "1px solid #D2D2D8",
-            boxSizing: "border-box",
+            justifyContent: "center",
+
+            padding: isSmallMobile ? "7px 14px" : "8px 17px",
+
+            borderRadius: "30px",
+
+            background: "#F1F1FF",
+            color: "#6265C4",
+
+            fontSize: isSmallMobile ? "10px" : "12px",
+
+            fontWeight: 500,
+
+            letterSpacing: "0.3px",
+
+            marginBottom: isSmallMobile ? "14px" : "18px",
+
+            fontFamily: "var(--font-poppins), Poppins, sans-serif",
           }}
         >
-          <span
-            style={{
-              width: "7px",
-              height: "7px",
-              borderRadius: "50%",
-              background: "#35459F",
-              display: "block",
-              flexShrink: 0,
-            }}
-          />
-
-          <span
-            style={{
-              fontFamily: "var(--font-poppins), Poppins, sans-serif",
-              fontSize: isSmallMobile ? "8px" : "10px",
-              fontWeight: 400,
-              lineHeight: 1,
-              color: "#747474",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Company History
-          </span>
+          Company History
         </div>
 
-        {/* Heading */}
+        {/* =================================================
+            HEADING
+        ================================================= */}
+
         <h2
           style={{
             margin: 0,
-            maxWidth: "470px",
-            fontFamily: "var(--font-poppins), Poppins, sans-serif",
-            fontSize: headingSize,
-            fontWeight: 300,
-            lineHeight: 1.08,
-            letterSpacing: isSmallMobile
-              ? "-1.5px"
+
+            fontSize: isSmallMobile
+              ? "32px"
               : isMobile
-                ? "-2px"
-                : "-2.5px",
-            color: "#080808",
+                ? "38px"
+                : isTablet
+                  ? "46px"
+                  : "56px",
+
+            lineHeight: 1.1,
+
+            fontWeight: 600,
+
+            letterSpacing: "-1.5px",
+
+            color: "#151515",
+
+            fontFamily: "var(--font-poppins), Poppins, sans-serif",
           }}
         >
-          A Journey of
-          <br />
+          A Journey of{" "}
           <span
             style={{
               color: "#6265C4",
-              fontWeight: 500,
             }}
           >
             Experience
           </span>
         </h2>
 
-        {/* Timeline */}
+        {/* =================================================
+            TIMELINE
+        ================================================= */}
+
         <div
           style={{
             position: "relative",
+
+            marginTop: isSmallMobile ? "55px" : isMobile ? "65px" : "85px",
+
             width: "100%",
-            marginTop: timelineMargin,
-            boxSizing: "border-box",
           }}
         >
-          {/* Horizontal Line */}
-          {!isMobile && (
-            <div
-              style={{
-                position: "absolute",
-                left: isSmallMobile ? "6px" : "9px",
-                right: isSmallMobile ? "6px" : "9px",
-                top: isSmallMobile ? "6px" : "9px",
-                height: isSmallMobile ? "2px" : "3px",
-                background: "#34439D",
-                zIndex: 0,
-              }}
-            />
-          )}
+          {/* =================================================
+              DESKTOP + TABLET
+          ================================================= */}
 
-          {/* Milestones */}
-          <div
-            style={{
-              position: "relative",
-              zIndex: 1,
-              width: "100%",
-              display: "grid",
-              gridTemplateColumns: gridColumns,
-              columnGap: isSmallMobile
-                ? "16px"
-                : isMobile
-                  ? "clamp(16px, 4vw, 25px)"
-                  : "clamp(25px, 4vw, 55px)",
-              rowGap: isMobile ? "28px" : "0",
-            }}
-          >
-            {milestones.map((milestone) => (
+          {!isMobile && (
+            <>
+              {/* -------------------------------------------
+                  GRAY BASE LINE
+              ------------------------------------------- */}
+
               <div
-                key={milestone.year}
                 style={{
-                  minWidth: 0,
-                  boxSizing: "border-box",
+                  position: "absolute",
+
+                  left: "0",
+                  right: "0",
+
+                  top: "9px",
+
+                  height: "4px",
+
+                  background: "#E2E3EA",
+
+                  borderRadius: "10px",
+
+                  zIndex: 0,
+                }}
+              />
+
+              {/* -------------------------------------------
+                  BLUE ANIMATED LINE
+              ------------------------------------------- */}
+
+              <div
+                style={{
+                  position: "absolute",
+
+                  left: "0",
+
+                  top: "9px",
+
+                  height: "4px",
+
+                  /*
+                   * THIS IS THE IMPORTANT PART
+                   *
+                   * progress goes:
+                   *
+                   * 0 -> 0%
+                   * 0.25 -> 25%
+                   * 0.50 -> 50%
+                   * 0.75 -> 75%
+                   * 1 -> 100%
+                   */
+                  width: `${progress * 100}%`,
+
+                  background:
+                    "linear-gradient(90deg, #34439D 0%, #6265C4 100%)",
+
+                  borderRadius: "10px",
+
+                  boxShadow:
+                    progress > 0 ? "0 0 10px rgba(52,67,157,0.35)" : "none",
+
+                  zIndex: 1,
+
+                  /*
+                   * requestAnimationFrame controls
+                   * the animation, so no CSS transition
+                   * is needed here.
+                   */
+                }}
+              />
+
+              {/* -------------------------------------------
+                  TIMELINE ITEMS
+              ------------------------------------------- */}
+
+              <div
+                style={{
+                  display: "grid",
+
+                  gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+
+                  gap: isTablet ? "25px" : "40px",
+
+                  position: "relative",
+
+                  width: "100%",
+
+                  zIndex: 2,
                 }}
               >
-                {/* Timeline Dot */}
-                <div
-                  style={{
-                    width: dotSize,
-                    height: dotSize,
-                    borderRadius: "50%",
-                    background: "#35459F",
-                    marginBottom: isSmallMobile ? "12px" : "16px",
-                    boxSizing: "border-box",
-                  }}
-                />
+                {milestones.map((milestone, index) => {
+                  const active = isMilestoneActive(index);
 
-                {/* Year */}
-                <h3
-                  style={{
-                    margin: 0,
-                    fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                    fontSize: yearSize,
-                    fontWeight: 500,
-                    lineHeight: 1.2,
-                    letterSpacing: "-0.5px",
-                    color: "#111111",
-                  }}
-                >
-                  {milestone.year}
-                </h3>
+                  return (
+                    <div
+                      key={milestone.year}
+                      style={{
+                        position: "relative",
 
-                {/* Description */}
-                <p
-                  style={{
-                    margin: isSmallMobile ? "4px 0 0" : "7px 0 0",
-                    maxWidth: "245px",
-                    fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                    fontSize: descSize,
-                    fontWeight: 400,
-                    lineHeight: isSmallMobile ? 1.3 : 1.35,
-                    color: "#777777",
-                  }}
-                >
-                  {milestone.description}
-                </p>
+                        paddingTop: "38px",
+
+                        minWidth: 0,
+                      }}
+                    >
+                      {/* ---------------------------------
+                            DOT
+                        --------------------------------- */}
+
+                      <div
+                        style={{
+                          position: "absolute",
+
+                          top: "0",
+                          left: "0",
+
+                          width: "20px",
+                          height: "20px",
+
+                          borderRadius: "50%",
+
+                          background: active ? "#34439D" : "#E2E3EA",
+
+                          border: "4px solid #FFFFFF",
+
+                          boxSizing: "border-box",
+
+                          boxShadow: active
+                            ? "0 0 0 2px #34439D, 0 0 15px rgba(52,67,157,0.35)"
+                            : "0 0 0 1px #E2E3EA",
+
+                          transition:
+                            "background 0.25s ease, box-shadow 0.25s ease",
+
+                          zIndex: 3,
+                        }}
+                      />
+
+                      {/* ---------------------------------
+                            YEAR
+                        --------------------------------- */}
+
+                      <div
+                        style={{
+                          fontSize: isTablet ? "20px" : "24px",
+
+                          fontWeight: 600,
+
+                          lineHeight: 1.2,
+
+                          color: active ? "#34439D" : "#B8B8C0",
+
+                          marginBottom: "12px",
+
+                          transition: "color 0.3s ease",
+
+                          fontFamily:
+                            "var(--font-poppins), Poppins, sans-serif",
+                        }}
+                      >
+                        {milestone.year}
+                      </div>
+
+                      {/* ---------------------------------
+                            DESCRIPTION
+                        --------------------------------- */}
+
+                      <p
+                        style={{
+                          margin: 0,
+
+                          maxWidth: "260px",
+
+                          fontSize: isTablet ? "12px" : "13px",
+
+                          lineHeight: 1.7,
+
+                          color: active ? "#666666" : "#B8B8C0",
+
+                          transition: "color 0.4s ease",
+
+                          fontFamily:
+                            "var(--font-poppins), Poppins, sans-serif",
+                        }}
+                      >
+                        {milestone.description}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
-          </div>
+            </>
+          )}
+
+          {/* =================================================
+              MOBILE + SMALL MOBILE
+          ================================================= */}
+
+          {isMobile && (
+            <div
+              style={{
+                position: "relative",
+
+                paddingLeft: isSmallMobile ? "36px" : "42px",
+              }}
+            >
+              {/* -------------------------------------------
+                  GRAY VERTICAL LINE
+              ------------------------------------------- */}
+
+              <div
+                style={{
+                  position: "absolute",
+
+                  left: isSmallMobile ? "8px" : "10px",
+
+                  top: "8px",
+
+                  bottom: "8px",
+
+                  width: "4px",
+
+                  background: "#E2E3EA",
+
+                  borderRadius: "20px",
+
+                  zIndex: 0,
+                }}
+              />
+
+              {/* -------------------------------------------
+                  BLUE VERTICAL ANIMATED LINE
+              ------------------------------------------- */}
+
+              <div
+                style={{
+                  position: "absolute",
+
+                  left: isSmallMobile ? "8px" : "10px",
+
+                  top: "8px",
+
+                  width: "4px",
+
+                  height: `${progress * 100}%`,
+
+                  background:
+                    "linear-gradient(180deg, #34439D 0%, #6265C4 100%)",
+
+                  borderRadius: "20px",
+
+                  boxShadow:
+                    progress > 0 ? "0 0 10px rgba(52,67,157,0.35)" : "none",
+
+                  zIndex: 1,
+                }}
+              />
+
+              {/* -------------------------------------------
+                  MOBILE ITEMS
+              ------------------------------------------- */}
+
+              {milestones.map((milestone, index) => {
+                const active = isMilestoneActive(index);
+
+                return (
+                  <div
+                    key={milestone.year}
+                    style={{
+                      position: "relative",
+
+                      minHeight:
+                        index === milestones.length - 1
+                          ? "auto"
+                          : isSmallMobile
+                            ? "165px"
+                            : "175px",
+
+                      paddingBottom:
+                        index === milestones.length - 1 ? "0" : "25px",
+
+                      zIndex: 2,
+                    }}
+                  >
+                    {/* ---------------------------------
+                          DOT
+                      --------------------------------- */}
+
+                    <div
+                      style={{
+                        position: "absolute",
+
+                        left: isSmallMobile ? "-36px" : "-42px",
+
+                        top: "0",
+
+                        width: "20px",
+                        height: "20px",
+
+                        borderRadius: "50%",
+
+                        background: active ? "#34439D" : "#E2E3EA",
+
+                        border: "4px solid #FFFFFF",
+
+                        boxSizing: "border-box",
+
+                        boxShadow: active
+                          ? "0 0 0 2px #34439D, 0 0 15px rgba(52,67,157,0.35)"
+                          : "0 0 0 1px #E2E3EA",
+
+                        transition:
+                          "background 0.25s ease, box-shadow 0.25s ease",
+
+                        zIndex: 3,
+                      }}
+                    />
+
+                    {/* ---------------------------------
+                          YEAR
+                      --------------------------------- */}
+
+                    <div
+                      style={{
+                        fontSize: isSmallMobile ? "21px" : "24px",
+
+                        fontWeight: 600,
+
+                        lineHeight: 1.2,
+
+                        color: active ? "#34439D" : "#B8B8C0",
+
+                        marginBottom: "9px",
+
+                        transition: "color 0.3s ease",
+
+                        fontFamily: "var(--font-poppins), Poppins, sans-serif",
+                      }}
+                    >
+                      {milestone.year}
+                    </div>
+
+                    {/* ---------------------------------
+                          DESCRIPTION
+                      --------------------------------- */}
+
+                    <p
+                      style={{
+                        margin: 0,
+
+                        fontSize: isSmallMobile ? "12px" : "13px",
+
+                        lineHeight: 1.7,
+
+                        color: active ? "#666666" : "#B8B8C0",
+
+                        transition: "color 0.4s ease",
+
+                        fontFamily: "var(--font-poppins), Poppins, sans-serif",
+                      }}
+                    >
+                      {milestone.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </section>
