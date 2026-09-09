@@ -12,12 +12,12 @@ const services = [
   {
     number: "02",
     title: "Deck Stores",
-    image: "/images/store-deck.jpg",
+    image: "/images/store-deck.png",
   },
   {
     number: "03",
     title: "Electrical Stores",
-    image: "/images/store-electrical.jpg",
+    image: "/images/store-electrical.png",
   },
   {
     number: "04",
@@ -37,7 +37,7 @@ const services = [
   {
     number: "07",
     title: "Spare Parts",
-    image: "/images/store-spare-parts.jpg",
+    image: "/images/store-spare-parts.png",
   },
   {
     number: "08",

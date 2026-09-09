@@ -117,7 +117,7 @@ export default function QualityValue() {
           inset: 0,
           width: "100%",
           height: "100%",
-          backgroundImage: "url('/images/quality-value-bg.jpg')",
+          backgroundImage: "url('/images/quality-value-bg.png')",
           backgroundSize: isSmallMobile ? "cover" : "100% 100%",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",

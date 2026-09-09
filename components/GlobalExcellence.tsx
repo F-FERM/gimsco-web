@@ -4,21 +4,16 @@ import React, { useEffect, useState } from "react";
 
 const regions = [
   {
-    title: "Middle East & Gulf",
-    description: "UAE (headquarters) and the wider GCC region",
+    title: "Middle East & Gulf"
   },
   {
     title: "North Europe",
-    description:
-      "Denmark, Germany, Netherlands, Norway, Greece, Cyprus, United Kingdom",
   },
   {
     title: "Asia-Pacific",
-    description: "Singapore, Hong Kong, China, South Korea",
   },
   {
     title: "Africa",
-    description: "Served through GIMSCO's regional network",
   },
 ];
 
@@ -451,25 +446,7 @@ export default function GlobalExcellence() {
                     color: "#293C9D",
                   }}
                 >
-                  {region.title}
-                </div>
-
-                <div
-                  style={{
-                    fontFamily: "var(--font-poppins), Poppins, sans-serif",
-                    fontSize: regionDescSize,
-                    fontWeight: 400,
-                    lineHeight: isSmallMobile
-                      ? 1.4
-                      : isMobile
-                        ? 1.4
-                        : isTablet
-                          ? 1.4
-                          : 1.5,
-                    color: "#777777",
-                  }}
-                >
-                  {region.description}
+                  <span style={{fontSize:"40px"}}>. </span>{region.title}
                 </div>
               </div>
             ))}

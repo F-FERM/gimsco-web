@@ -162,7 +162,7 @@ export default function Home() {
             inset: 0,
             width: "100%",
             height: "100%",
-            backgroundImage: "url('/images/hero-bg.jpg')",
+            backgroundImage: "url('/images/hero-bg.png')",
             backgroundSize: "cover",
             backgroundPosition,
             backgroundRepeat: "no-repeat",

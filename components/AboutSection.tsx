@@ -170,7 +170,7 @@ export default function AboutSection() {
                   : "-2.2px",
             }}
           >
-            35 Years of{" "}
+            35+ Years of{" "}
             <span
               style={{
                 color: "#6063C4",
@@ -431,7 +431,7 @@ export default function AboutSection() {
           }}
         >
           <Image
-            src="/images/about-ship.jpg"
+            src="/images/about-ship.png"
             alt="GIMSCO maritime operations"
             fill
             sizes="(max-width: 480px) 100vw, (max-width: 767px) 100vw, 470px"
